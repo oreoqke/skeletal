@@ -14,7 +14,6 @@ struct UserProfileView: View {
     // @StateObject private var userHistoryStore = UserHistoryStore()
     //   @State private var landmarkVisits: [LandmarkVisit] = []
     private let userHistory = UserHistoryStore.shared
-    // @State private var landmarkVisits: [LandmarkVisit]
     
     
     var body: some View {
