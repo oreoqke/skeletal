@@ -41,9 +41,9 @@
 		4ED93CA82BB0B3040053D2EC /* MapStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED93CA72BB0B3040053D2EC /* MapStore.swift */; };
 		4ED93CAB2BB0B3710053D2EC /* homepageSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED93CAA2BB0B3710053D2EC /* homepageSearch.swift */; };
 		4ED93CAD2BB0B38F0053D2EC /* searchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED93CAC2BB0B38F0053D2EC /* searchBarView.swift */; };
-		4ED93CB42BB10E7A0053D2EC /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 4ED93CB32BB10E7A0053D2EC /* GoogleSignIn */; };
-		4ED93CB62BB10E7A0053D2EC /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 4ED93CB52BB10E7A0053D2EC /* GoogleSignInSwift */; };
-		4ED93CB82BB10E830053D2EC /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 4ED93CB72BB10E830053D2EC /* Alamofire */; };
+		F76ECAFE2BB1D1B3005FFB63 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = F76ECAFD2BB1D1B3005FFB63 /* Alamofire */; };
+		F76ECB012BB1D1C3005FFB63 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = F76ECB002BB1D1C3005FFB63 /* GoogleSignIn */; };
+		F76ECB032BB1D1C3005FFB63 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = F76ECB022BB1D1C3005FFB63 /* GoogleSignInSwift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -89,9 +89,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4ED93CB82BB10E830053D2EC /* Alamofire in Frameworks */,
-				4ED93CB42BB10E7A0053D2EC /* GoogleSignIn in Frameworks */,
-				4ED93CB62BB10E7A0053D2EC /* GoogleSignInSwift in Frameworks */,
+				F76ECB032BB1D1C3005FFB63 /* GoogleSignInSwift in Frameworks */,
+				F76ECAFE2BB1D1B3005FFB63 /* Alamofire in Frameworks */,
+				F76ECB012BB1D1C3005FFB63 /* GoogleSignIn in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -244,9 +244,9 @@
 			);
 			name = wanderhub;
 			packageProductDependencies = (
-				4ED93CB32BB10E7A0053D2EC /* GoogleSignIn */,
-				4ED93CB52BB10E7A0053D2EC /* GoogleSignInSwift */,
-				4ED93CB72BB10E830053D2EC /* Alamofire */,
+				F76ECAFD2BB1D1B3005FFB63 /* Alamofire */,
+				F76ECB002BB1D1C3005FFB63 /* GoogleSignIn */,
+				F76ECB022BB1D1C3005FFB63 /* GoogleSignInSwift */,
 			);
 			productName = wanderhub;
 			productReference = F7EAB9132BA0B7F800F2B335 /* wanderhub.app */;
@@ -277,8 +277,8 @@
 			);
 			mainGroup = F7EAB90A2BA0B7F800F2B335;
 			packageReferences = (
-				0412BB2A2BAFF5DB00991ED3 /* XCRemoteSwiftPackageReference "Alamofire" */,
-				4ED93CAE2BB0B4070053D2EC /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				F76ECAFC2BB1D1B3005FFB63 /* XCRemoteSwiftPackageReference "Alamofire" */,
+				F76ECAFF2BB1D1C3005FFB63 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 			);
 			productRefGroup = F7EAB9142BA0B7F800F2B335 /* Products */;
 			projectDirPath = "";
@@ -471,7 +471,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"wanderhub/Preview Content\"";
-				DEVELOPMENT_TEAM = 9GF3YB429Y;
+				DEVELOPMENT_TEAM = 7CP2PKVSMZ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "to take pics";
@@ -504,7 +504,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"wanderhub/Preview Content\"";
-				DEVELOPMENT_TEAM = 9GF3YB429Y;
+				DEVELOPMENT_TEAM = 7CP2PKVSMZ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "to take pics";
@@ -553,39 +553,39 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		0412BB2A2BAFF5DB00991ED3 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+		F76ECAFC2BB1D1B3005FFB63 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
 			requirement = {
-				kind = exactVersion;
-				version = 5.8.0;
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.9.0;
 			};
 		};
-		4ED93CAE2BB0B4070053D2EC /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+		F76ECAFF2BB1D1C3005FFB63 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/google/GoogleSignIn-iOS.git";
 			requirement = {
-				kind = exactVersion;
-				version = 7.0.0;
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		4ED93CB32BB10E7A0053D2EC /* GoogleSignIn */ = {
+		F76ECAFD2BB1D1B3005FFB63 /* Alamofire */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 4ED93CAE2BB0B4070053D2EC /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			package = F76ECAFC2BB1D1B3005FFB63 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+		F76ECB002BB1D1C3005FFB63 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F76ECAFF2BB1D1C3005FFB63 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignIn;
 		};
-		4ED93CB52BB10E7A0053D2EC /* GoogleSignInSwift */ = {
+		F76ECB022BB1D1C3005FFB63 /* GoogleSignInSwift */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 4ED93CAE2BB0B4070053D2EC /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			package = F76ECAFF2BB1D1C3005FFB63 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignInSwift;
-		};
-		4ED93CB72BB10E830053D2EC /* Alamofire */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 0412BB2A2BAFF5DB00991ED3 /* XCRemoteSwiftPackageReference "Alamofire" */;
-			productName = Alamofire;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
