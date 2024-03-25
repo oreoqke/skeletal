@@ -53,46 +53,98 @@ final class ImageStore {
             }
         }, to: apiUrl, method: .post).validate().serializingData().value
     }
- 
-    func getImages(completion: @escaping ([ImageData]?) -> Void) {
-        guard let apiUrl = URL(string: "\(serverUrl)getimages/") else {
-            print("getImages: bad URL")
-            completion(nil)
+        
+        func getLandmarkName() async -> String? {
+            let landmark_name: String?
+            
+
+            guard let getImageUrl = URL(string: "\(serverUrl)get_landmarks") else {
+                print("getImageInfo: Bad URL")
+                return nil
+            }
+            
+            var request = URLRequest(url: getImageUrl)
+            guard let token = UserDefaults.standard.string(forKey: "usertoken") else {
+                return nil
+            }
+            
+            request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+            request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Accept")
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization") // todo bug may be here!
+            request.httpMethod = "POST"
+    
+        
+            do {
+                let (data, response) = try await URLSession.shared.data(for: request)
+                
+                if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
+                    print("HTTP STATUS: \(httpStatus.statusCode)")
+                    return nil
+                }
+
+                guard let jsonObj = try? JSONSerialization.jsonObject(with: data) as? [String:Any] else {
+                    print("getImageAndAddToDb: failed JSON deserialization")
+                    return nil
+                }
+                
+                guard let landmark_name = jsonObj["landmark_info"] as? String else {
+                    return nil
+                }
+                
+                return landmark_name
+            } catch {
+                print("Login Networking Error")
+                return nil
+            }
+        }
+    
+    func addLandmarkToUserHistory(landmark_name: String) async -> Void {
+        guard let getImageUrl = URL(string: "\(serverUrl)add-user-landmark") else {
+            print("getImageInfo: Bad URL")
             return
         }
         
-        AF.request(apiUrl, method: .get).responseData { response in
-            switch response.result {
-            case .success(let data):
-                guard let jsonObj = try? JSONSerialization.jsonObject(with: data) as? [String:Any] else {
-                    print("getImages: failed JSON deserialization")
-                    completion(nil)
-                    return
-                }
-                
-                let imagesReceived = jsonObj["images"] as? [[String?]] ?? []
-                var images = [ImageData]()
-                for imageEntry in imagesReceived {
-                    if imageEntry.count == self.nFields {
-                        let geoDataString = imageEntry[3] ?? "" // Assuming geoData is at index 3
-                        let geoData = self.parseGeoData(from: geoDataString)
-                        let image = ImageData(username: imageEntry[0],
-                                          timestamp: imageEntry[1],
-                                          imageUrl: imageEntry[2],
-                                          geoData: geoData)
-                        images.append(image)
-                    } else {
-                        print("getImages: Received unexpected number of fields: \(imageEntry.count) instead of \(self.nFields).")
-                    }
-                }
-                completion(images)
-                
-            case .failure(let error):
-                print("getImages: NETWORKING ERROR - \(error.localizedDescription)")
-                completion(nil)
+        var request = URLRequest(url: getImageUrl)
+        guard let token = UserDefaults.standard.string(forKey: "usertoken") else {
+            return
+        }
+        
+        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Accept")
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization") // todo bug may be here!
+        request.httpMethod = "POST"
+    
+        let jsonObj = ["landmark_name": landmark_name]
+        guard let jsonData = try? JSONSerialization.data(withJSONObject: jsonObj) else {
+            print("addLandmarkToUserHistory: jsonData serialization error")
+            return
+        }
+        
+        request.httpBody = jsonData
+    
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            
+            if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
+                print("HTTP STATUS: \(httpStatus.statusCode)")
+                return
             }
+            
+            // are we sure that we need to serialize it?
+            guard let jsonObj = try? JSONSerialization.jsonObject(with: data) as? [String:Any] else {
+                print("getImageAndAddToDb: failed JSON deserialization")
+                return
+            }
+            
+            return
+        } catch {
+            print("Login Networking Error")
+            return
         }
     }
+    
+    
+    
 
     // Helper function to parse GeoData from a string
     private func parseGeoData(from geoDataString: String?) -> GeoData? {

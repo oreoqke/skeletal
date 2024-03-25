@@ -9,12 +9,13 @@ import SwiftUI
 struct CameraView: View {
     @ObservedObject var viewModel: NavigationControllerViewModel
     
-    private let username = "tiwarin"
+    private let username = UserDefaults.standard.string(forKey: "username")
     @State private var message = "Some short sample text."
     @State private var image: UIImage? = nil
     @State private var videoUrl: URL? = nil
     @State private var isPresenting = false
     @State private var sourceType: UIImagePickerController.SourceType? = nil
+    @State private var confirmed_landmark_name: String? = nil
     
     var body: some View {
         VStack {
@@ -43,6 +44,14 @@ struct CameraView: View {
                             .frame(maxWidth: .infinity, alignment: .center)
 //                            .padding(.trailing, 18)
                     }
+                    
+                    // Display landmark name if available
+                               if let landmark = confirmed_landmark_name {
+                                   Text("Landmark: \(landmark)")
+                                       .font(.headline)
+                                       .padding(.top, 10)
+                               }
+                               
                 }
             }
             Spacer().frame(height:100)
@@ -101,16 +110,25 @@ struct CameraView: View {
     }
     
     func submitAction() {
-        // Create a new Chatt object with the message, image, and geoData if available
-        let geoData = GeoData(lat: 0.0, lon: 0.0, place: "Unknown", facing: "Unknown", speed: "Unknown")
-        let imagedata = ImageData(username: username, timestamp: Date().description, imageUrl: nil, geoData: geoData)
         
-        // Call the postChatt function to send the post request
-        Task {
-            let _ = await ImageStore.shared.postImage(imagedata, image: image)
-            print("success")
-            print(imagedata)
-        }
+        let geoData = GeoData(lat: 0.0, lon: 0.0, place: "Unknown", facing: "Unknown", speed: "Unknown")
+                let imagedata = ImageData(username: username, timestamp: Date().description, imageUrl: nil, geoData: geoData)
+                
+                // Call the postChatt function to send the post request
+                Task {
+                    let _ = await ImageStore.shared.postImage(imagedata, image: image)
+                    if let landmark_name = await ImageStore.shared.getLandmarkName() {
+                        // add landmark
+                        confirmed_landmark_name = landmark_name
+                        let _ = await ImageStore.shared.addLandmarkToUserHistory(landmark_name: landmark_name)
+                    }
+                    else {
+                        // no landmark found
+                        return
+                    }
+
+                }
+        
     }
     
     @ViewBuilder
