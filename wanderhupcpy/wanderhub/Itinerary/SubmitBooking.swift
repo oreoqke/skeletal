@@ -28,6 +28,7 @@ class TravelBookingService {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.addValue("application/json; charset=UTF-8", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json; charset=UTF-8", forHTTPHeaderField: "Authorization")
         
         do {
             let encoder = JSONEncoder()
