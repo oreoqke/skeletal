@@ -33,6 +33,7 @@
 		0412BB1B2BAFF3C000991ED3 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0412BAFF2BAFF3BF00991ED3 /* HomeView.swift */; };
 		0412BB1D2BAFF3C000991ED3 /* StartupPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0412BB012BAFF3BF00991ED3 /* StartupPage.swift */; };
 		0412BB1E2BAFF3C000991ED3 /* wanderhubApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0412BB022BAFF3BF00991ED3 /* wanderhubApp.swift */; };
+		043D03A82BB1BD5900D6E6EC /* Test1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 043D03A72BB1BD5900D6E6EC /* Test1.swift */; };
 		25870D3F2BB0C62300F35B18 /* UserProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25870D3E2BB0C62300F35B18 /* UserProfileView.swift */; };
 		25870D412BB0CB6B00F35B18 /* UserHistoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25870D402BB0CB6B00F35B18 /* UserHistoryStore.swift */; };
 		25870D452BB104D700F35B18 /* OnboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25870D442BB104D700F35B18 /* OnboardView.swift */; };
@@ -72,6 +73,7 @@
 		0412BAFF2BAFF3BF00991ED3 /* HomeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		0412BB012BAFF3BF00991ED3 /* StartupPage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StartupPage.swift; sourceTree = "<group>"; };
 		0412BB022BAFF3BF00991ED3 /* wanderhubApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = wanderhubApp.swift; sourceTree = "<group>"; };
+		043D03A72BB1BD5900D6E6EC /* Test1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Test1.swift; sourceTree = "<group>"; };
 		25870D3E2BB0C62300F35B18 /* UserProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileView.swift; sourceTree = "<group>"; };
 		25870D402BB0CB6B00F35B18 /* UserHistoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserHistoryStore.swift; sourceTree = "<group>"; };
 		25870D442BB104D700F35B18 /* OnboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardView.swift; sourceTree = "<group>"; };
@@ -185,6 +187,7 @@
 				0412BAFF2BAFF3BF00991ED3 /* HomeView.swift */,
 				0412BB012BAFF3BF00991ED3 /* StartupPage.swift */,
 				0412BB022BAFF3BF00991ED3 /* wanderhubApp.swift */,
+				043D03A72BB1BD5900D6E6EC /* Test1.swift */,
 			);
 			path = wanderhub;
 			sourceTree = "<group>";
@@ -326,6 +329,7 @@
 				0412BB0B2BAFF3C000991ED3 /* Media.swift in Sources */,
 				0412BB0D2BAFF3C000991ED3 /* ItineraryView.swift in Sources */,
 				0412BB172BAFF3C000991ED3 /* ChildNavController.swift in Sources */,
+				043D03A82BB1BD5900D6E6EC /* Test1.swift in Sources */,
 				0412BB072BAFF3C000991ED3 /* Landmark.swift in Sources */,
 				0412BB142BAFF3C000991ED3 /* SignUp.swift in Sources */,
 				4ED93CAD2BB0B38F0053D2EC /* searchBarView.swift in Sources */,
