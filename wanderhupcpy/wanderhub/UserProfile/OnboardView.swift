@@ -18,6 +18,7 @@ struct Onboard: View {
     
     
     @Binding var signinProcess: Bool
+    @Binding var showDismiss: Bool
     
     var body: some View {
         VStack(spacing: 41) {
@@ -220,6 +221,7 @@ struct Onboard: View {
             Button(action: {
                 // Action to perform when button is pressed
                 //self.continueButton.toggle()
+                showDismiss.toggle()
                 signinProcess.toggle()
                 
             }) {

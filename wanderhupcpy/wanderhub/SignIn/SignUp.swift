@@ -20,7 +20,7 @@ struct SignUpView: View {
     @State private var loginFailed = false
     
     @State private var navigateToOnboarding = false
-    
+    @State private var showDismiss = false
     func signup() {
         if username.isEmpty || password.isEmpty || email.isEmpty {
             showAlert = true
@@ -51,6 +51,7 @@ struct SignUpView: View {
                     .foregroundColor(titleCol)
                 
                 TextField("Enter name", text: $username)
+                    .autocapitalization(.none)
                     .foregroundColor(greyCol)
                     .padding()
                     .background(
@@ -61,6 +62,7 @@ struct SignUpView: View {
                     .padding(.horizontal, 40)
                 
                 SecureField("Enter password", text: $password)
+                    .autocapitalization(.none)
                     .foregroundColor(greyCol)
                     .padding()
                     .background(
@@ -71,6 +73,7 @@ struct SignUpView: View {
                     .padding(.horizontal, 40)
                 
                 TextField("Enter Email", text: $email)
+                    .autocapitalization(.none)
                     .foregroundColor(greyCol)
                     .padding()
                     .background(
@@ -81,11 +84,10 @@ struct SignUpView: View {
                     .padding(.horizontal, 40)
                 
                 Button("Sign Up") {
-                    navigateToOnboarding = true
-                    signinProcess.toggle()
-                    //signup()
-                    //                signinProcess.toggle()
-                    //                presentationMode.wrappedValue.dismiss()
+                    //IF you don't want to sign up uncomment this
+//                    navigateToOnboarding = true
+//                    signinProcess.toggle()
+                    signup()
                 }
                 .padding()
                 .frame(maxWidth: .infinity)
@@ -101,13 +103,17 @@ struct SignUpView: View {
                 }
                 
                 .fullScreenCover(isPresented: $navigateToOnboarding) {
-                    Onboard(signinProcess: $navigateToOnboarding)
+                    Onboard(signinProcess: $navigateToOnboarding, showDismiss: $showDismiss)
                     
                }
-                if !signinProcess {
+                if showDismiss {
                     Button {
                         presentationMode.wrappedValue.dismiss()
+                        signinProcess.toggle()
                     } label: {
+                        Text("Sign Up Successful!")
+                            .bold()
+                            .foregroundColor(titleCol)
                         Text("Start planning my trip")
                     }
                 }
