@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import AVKit
+import AVFoundation
 
 struct StartupPage: View {
     @State private var isActive = false
@@ -15,20 +17,21 @@ struct StartupPage: View {
     var body: some View {
         NavigationView{
             VStack {
-                if isActive {
-                    if SigninPresented {
-                        SigninView(isPresented: $SigninPresented)
-                    } else {
-                        HomeView()
-                    }
-                } else {
-                    Spacer()
-                    Text("WanderHub")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                        .foregroundColor(titleCol)
-                    Spacer()
-                }
+                Talk()
+//                if isActive {
+//                    if SigninPresented {
+//                        SigninView(isPresented: $SigninPresented)
+//                    } else {
+//                        HomeView()
+//                    }
+//                } else {
+//                    Spacer()
+//                    Text("WanderHub")
+//                        .font(.largeTitle)
+//                        .fontWeight(.bold)
+//                        .foregroundColor(titleCol)
+//                    Spacer()
+//                }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(backCol)
