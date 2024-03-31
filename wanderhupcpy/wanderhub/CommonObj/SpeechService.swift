@@ -17,8 +17,8 @@ enum VoiceType: String {
     case standardMale = "en-US-Standard-D"
 }
 
-let ttsAPIUrl = speechCred
-let APIKey = "AIzaSyD_B7VNy-pYuKlB4sxoSzu5qI5fEunVols"
+let ttsAPIUrl = "https://texttospeech.googleapis.com/v1beta1/text:synthesize"
+let APIKey = speechCred
 
 class SpeechService: NSObject, AVAudioPlayerDelegate {
 
