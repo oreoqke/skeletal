@@ -17,7 +17,7 @@ enum VoiceType: String {
     case standardMale = "en-US-Standard-D"
 }
 
-let ttsAPIUrl = "https://texttospeech.googleapis.com/v1beta1/text:synthesize"
+let ttsAPIUrl = "https://texttospeech.googleapis.com/v1/text:synthesize"
 let APIKey = speechCred
 
 class SpeechService: NSObject, AVAudioPlayerDelegate {
@@ -28,7 +28,7 @@ class SpeechService: NSObject, AVAudioPlayerDelegate {
     private var player: AVAudioPlayer?
     private var completionHandler: (() -> Void)?
     
-    func speak(text: String, voiceType: VoiceType = .waveNetFemale, completion: @escaping () -> Void) {
+    func speak(text: String, voiceType: VoiceType = .standardMale, completion: @escaping () -> Void) {
         guard !self.busy else {
             print("Speech Service busy!")
             return
@@ -40,7 +40,7 @@ class SpeechService: NSObject, AVAudioPlayerDelegate {
             let postData = self.buildPostData(text: text, voiceType: voiceType)
             let headers = ["X-Goog-Api-Key": APIKey, "Content-Type": "application/json; charset=utf-8"]
             let response = self.makePOSTRequest(url: ttsAPIUrl, postData: postData, headers: headers)
-
+            //print(response)
             // Get the `audioContent` (as a base64 encoded string) from the response.
             guard let audioContent = response["audioContent"] as? String else {
                 print("Invalid response: \(response)")
@@ -133,5 +133,32 @@ class SpeechService: NSObject, AVAudioPlayerDelegate {
         
         self.completionHandler!()
         self.completionHandler = nil
+    }
+    
+    // Function to stop playback
+    func stopSpeaking() {
+        guard let player = player, player.isPlaying else { return }
+        player.stop()
+        
+        // Resetting the player and busy state
+        self.player?.delegate = nil
+        self.player = nil
+        self.busy = false
+        
+        // Calling the completion handler if it exists
+        completionHandler?()
+        completionHandler = nil
+    }
+    
+    // Function to rewind playback by a certain number of seconds
+    func rewindPlayback(by seconds: TimeInterval) {
+        guard let player = player else { return }
+        
+        let newTime = player.currentTime - seconds
+        player.currentTime = max(newTime, 0) // Ensuring the new time is not negative
+        
+        if !player.isPlaying {
+            player.play() // Resume playing if not already playing
+        }
     }
 }
