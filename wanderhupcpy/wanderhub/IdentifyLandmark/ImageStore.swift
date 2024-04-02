@@ -20,25 +20,30 @@ final class ImageStore {
     // instances can be created
     private(set) var chatts = [ImageData]()
     private let nFields = Mirror(reflecting: ImageData()).children.count
-    
-//    private let serverUrl = "https://127.0.0.1:8080/"
-    
+        
     // TODO: ADD AUTHORIZATION. USE WanderHubID.shared.id TO SEND REQUEST TO BACKEND
     func postImage(_ imagedata: ImageData, image: UIImage?) async -> Data? {
-        guard let apiUrl = URL(string: "\(serverUrl)postimages/") else {
+        guard let apiUrl = URL(string: "\(serverUrl)post_landmarks/") else {
             print("postChatt: Bad URL")
             return nil
         }
         
-        return try? await AF.upload(multipartFormData: { mpFD in
+        guard let token = UserDefaults.standard.string(forKey: "usertoken") else {
+            return nil
+        }
+        print(token)
+        let headers : HTTPHeaders = [
+                    "Authorization": "Bearer \(token)",
+                    "Accept": "application/json; charset=utf-8",
+                    "Content-Type": "application/json; charset=utf-8" ]
+        
+    ///return try? await
+        AF.upload(multipartFormData: { mpFD in
             if let usernameData = imagedata.username?.data(using: .utf8) {
                 mpFD.append(usernameData, withName: "username")
             }
             if let timestampData = imagedata.timestamp?.data(using: .utf8) {
                 mpFD.append(timestampData, withName: "timestamp")
-            }
-            if let imageUrl = imagedata.imageUrl, let imageUrlData = imageUrl.data(using: .utf8) {
-                mpFD.append(imageUrlData, withName: "imageUrl")
             }
             if let geoData = imagedata.geoData {
                 // Append GeoData fields
@@ -48,17 +53,25 @@ final class ImageStore {
                 mpFD.append(geoData.facing.data(using: .utf8) ?? Data(), withName: "facing")
                 mpFD.append(geoData.speed.data(using: .utf8) ?? Data(), withName: "speed")
             }
-            if let jpegImage = image?.jpegData(compressionQuality: 1.0) {
-                mpFD.append(jpegImage, withName: "image", fileName: "chattImage", mimeType: "image/jpeg")
+            if let image = image?.jpegData(compressionQuality: 1.0) {
+                mpFD.append(image, withName: "image", fileName: "chattImage", mimeType: "image/jpeg")
             }
-        }, to: apiUrl, method: .post).validate().serializingData().value
+
+        }, to: apiUrl, method: .post, headers: headers )
+        .uploadProgress(queue: .main, closure: { progress in
+                    //Current upload progress of file
+                    print("Upload Progress: \(progress.fractionCompleted)")
+                })
+                .responseJSON(completionHandler: { data in
+print(data)                })
+        
+      return nil  //.validate().serializingData().value
     }
         
         func getLandmarkName() async -> String? {
-            let landmark_name: String?
+            //let landmark_name: String?
             
-
-            guard let getImageUrl = URL(string: "\(serverUrl)get_landmarks") else {
+            guard let getImageUrl = URL(string: "\(serverUrl)get_landmark/") else {
                 print("getImageInfo: Bad URL")
                 return nil
             }
@@ -87,10 +100,10 @@ final class ImageStore {
                     return nil
                 }
                 
-                guard let landmark_name = jsonObj["landmark_info"] as? String else {
+                guard let landmark_name = jsonObj["landmarks_info"] as? String else {
                     return nil
                 }
-                
+                print("reached here atleast", landmark_name)
                 return landmark_name
             } catch {
                 print("Login Networking Error")
