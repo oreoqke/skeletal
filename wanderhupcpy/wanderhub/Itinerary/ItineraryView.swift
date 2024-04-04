@@ -10,7 +10,8 @@ import SwiftUI
 import _MapKit_SwiftUI
 
 
-// TODO: remove this but im lazy /shrug
+// TODO: get a date object dynamically from backend
+// takes in format ""DD/MM/YYYY", "hh:mm"
 func getDateObject(_ date: String, _ time: String) -> Date {
     
     var components = DateComponents()
@@ -65,10 +66,7 @@ struct ItineraryDropViewDelegate: DropDelegate {
 
 struct ItineraryHeaderView: View {
     
-    // TODO: build this struct?
-    // @State tripInfo
-    
-    
+    // TODO: get this data from backend
     @State var tripName: String = "Paris"
     @State var tripStartDate: Date = getDateObject("11/11/2023", "00:00")
     @State var tripEndDate:   Date = getDateObject("11/15/2023", "00:00")
@@ -104,7 +102,7 @@ struct ItineraryHeaderView: View {
                     .frame(width: 50.0, height: 50.0)
                     .foregroundColor(Color.yellow)
                 
-//                Text("we need images ;-;\n\t- vivi <3").font(Font.caption)
+                //                Text("we need images ;-;\n\t- vivi <3").font(Font.caption)
             }
             .padding()
             
@@ -173,57 +171,91 @@ struct ItinerarySingleEntryView: View {
     }
 }
 
-//struct ItineraryEntriesView : View {
+struct ItinerarySingleEntryExpandedView: View {
     
-    //    @State var draggedLandmark: Landmark?
-    //    @StateObject var itineraryEntries = LandmarkStore.shared
-    //
-    //    var body: some View {
-    //
-    //        // itinerary list
-    //        ScrollView(showsIndicators: false) {
-    //            VStack(spacing: 10) {
-    //                ForEach(Array(itineraryEntries.landmarks.enumerated()), id: \.element.id) { index, landmark in
-    //                    ItinerarySingleEntryView(index: index, landmark: $itineraryEntries.landmarks[index])
-    //
-    //                        .onDrag {
-    //                            self.draggedLandmark = landmark
-    //                            return NSItemProvider()
-    //                        }
-    //                        .onDrop(
-    //                            of: [.text],
-    //                            delegate: ItineraryDropViewDelegate(
-    //                                destinationLandmark: landmark,
-    //                                landmarks: $itineraryEntries.landmarks,
-    //                                draggedLandmark: $draggedLandmark
-    //                            ))
-    //
-    //                        .onTapGesture(count: 1) {
-    //                            // TODO: make MapView.selected() with $landmark
-    //                            // TODO: change nav to mapview
-    //                        }
-    //
-    //                        .onTapGesture(count: 2) {
-    //                            itineraryEntries.removeLandmark(index: index)
-    //
-    //                        }
-    //                }
-    //            }
-    //        }
-    //        .refreshable {
-    //            await itineraryEntries.getLandmarks()
-    //        }
-    //        .padding(.horizontal)
-    //
-    //    }
+    @State var index: Int
+    @Binding var landmark: Landmark
     
-//}
+    @ObservedObject var viewModel: NavigationControllerViewModel
+    @StateObject var itineraryEntries = LandmarkStore.shared
+    
+    var body: some View {
+        VStack {
+            HStack {
+                VStack {
+                    
+                    // Landmark Name
+                    TextField("", text: Binding (get: {landmark.name ?? ""}, set: { _ in}))
+                        .font(Font.title2)
+                        .foregroundColor(Color(red: 0.5, green: 0.5, blue: 0.5, opacity: 1))
+                        .disabled(/*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
+                    
+                    // Optional Description Message
+                    TextField("", text: Binding (get: {landmark.message ?? ""}, set: { _ in}))
+                        .font(Font.body)
+                        .foregroundColor(Color(red: 0.7, green: 0.7, blue: 0.7, opacity: 1))
+                        .disabled(/*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
+                    
+                }
+                Spacer()
+                
+                Button(action: {
+                    landmark.favorite.toggle()
+                    
+                }) { // closure dynamically draws favorite star
+                    landmark.favorite ?
+                    Image(systemName: "star.fill")
+                        .foregroundColor(Color.yellow) :
+                    Image(systemName: "star")
+                        .foregroundColor(Color.blue)
+                }
+            }
+            
+            HStack {
+                Button(action: {
+                    viewModel.itineraryDirectNavigation(landmark: landmark)
+                }) {
+                    Text("View on Map")
+                        .font(Font.body)
+                }
+                .padding()
+                .background(Color(red: 0, green: 0.5, blue: 0))
+                .foregroundStyle(.white)
+                .clipShape(Capsule())
+                
+                Spacer()
+                
+                Button(action: {
+                    itineraryEntries.removeLandmark(index: index)
+                }) {
+                    Text("Delete Landmark")
+                        .font(Font.body)
+                }
+                .padding()
+                .background(Color(red: 0.5, green: 0, blue: 0))
+                .foregroundStyle(.white)
+                .clipShape(Capsule())
+            }
+           
+        }
+       
+        .padding()
+        .background(Color(red: 0.9, green: 0.9, blue: 0.9, opacity: 1))
+        .cornerRadius(8)
+    }
+}
+
 
 struct ItineraryView: View {
     
     @ObservedObject var viewModel: NavigationControllerViewModel
     
+    // moving a landmark around
     @State var draggedLandmark: Landmark?
+    
+    // expanding information on individual landmark
+    @State var expandedLandmark: Landmark?
+    
     @StateObject var itineraryEntries = LandmarkStore.shared
     
     var body: some View {
@@ -237,8 +269,18 @@ struct ItineraryView: View {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 10) {
                     ForEach(Array(itineraryEntries.landmarks.enumerated()), id: \.element.id) { index, landmark in
-                        ItinerarySingleEntryView(index: index, landmark: $itineraryEntries.landmarks[index])
-                        
+
+                        Group {
+                            if (self.expandedLandmark?.id == landmark.id)
+                            {
+                                ItinerarySingleEntryExpandedView(index: index, landmark: $itineraryEntries.landmarks[index], viewModel: viewModel, itineraryEntries: itineraryEntries)
+                            }
+                            else
+                            {
+                                ItinerarySingleEntryView(index: index, landmark: $itineraryEntries.landmarks[index])
+                            }
+                          }
+                    
                             .onDrag {
                                 self.draggedLandmark = landmark
                                 return NSItemProvider()
@@ -252,18 +294,8 @@ struct ItineraryView: View {
                                 ))
                         
                             .onTapGesture(count: 1) {
-                                viewModel.itineraryDirectNavigation(landmark: landmark)
+                                self.expandedLandmark = landmark
                             }
-//                                NavigationView(content: {
-//                                    NavigationLink(destination: Text("Destination")) {     }
-//                                })
-//                            }
-                        
-                            // TODO: make a new gesture
-//                            .onTapGesture(count: 2) {
-//                                itineraryEntries.removeLandmark(index: index)
-//                                
-//                            }
                     }
                 }
             }
@@ -278,19 +310,4 @@ struct ItineraryView: View {
         Spacer()
         ChildNavController(viewModel: viewModel)
     }
-    
 }
-
-//    var body: some View {
-//
-//        // Full Itinerary
-//        VStack {
-//            ItineraryHeaderView()
-//            Spacer()
-//            ItineraryEntriesView()
-//        }
-//        .background(backCol)
-//        Spacer()
-//        ChildNavController(viewModel: viewModel)
-//
-//    }

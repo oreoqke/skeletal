@@ -59,19 +59,28 @@ struct InfoView: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            HStack {
-                if let name = landmark.name, let timestamp = landmark.timestamp {
-                    Text(name).padding(EdgeInsets(top: 4, leading: 8, bottom: 0, trailing: 0)).font(.system(size: 16))
+                
+                if let name = landmark.name, let message = landmark.message {
+                    // Landmark Name
+                    Text(name)
+                        .padding(EdgeInsets(top: 4, leading: 8, bottom: 0, trailing: 0))
+                        .font(.system(size: 16))
+                        .lineLimit(2, reservesSpace: true)
                     Spacer()
-                    Text(timestamp).padding(EdgeInsets(top: 4, leading: 8, bottom: 0, trailing: 4)).font(.system(size: 12))
+                    Text(message)
+                        .padding(EdgeInsets(top: 4, leading: 8, bottom: 0, trailing: 4))
+                        .font(.system(size: 12))
+                        .lineLimit(2, reservesSpace: true)
                 }
-            }
-            if let message = landmark.message {
-                Text(message).padding(EdgeInsets(top: 1, leading: 8, bottom: 0, trailing: 4)).font(.system(size: 14)).lineLimit(2, reservesSpace: true)
-            }
-            if let geodata = landmark.geodata {
-                Text("\(geodata.postedFrom)").padding(EdgeInsets(top: 0, leading: 8, bottom: 10, trailing: 4)).font(.system(size: 12)).lineLimit(2, reservesSpace: true)
-            }
+                
+                else if let name = landmark.name {
+                    // Landmark Name
+                    // Optional Description Message
+                    Text(name)
+                        .padding(EdgeInsets(top: 4, leading: 8, bottom: 0, trailing: 0))
+                        .font(.system(size: 16))
+                        .lineLimit(2, reservesSpace: true)
+                }
         }
         .background {
             Rectangle()
