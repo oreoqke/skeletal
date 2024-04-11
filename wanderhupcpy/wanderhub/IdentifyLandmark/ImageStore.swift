@@ -62,8 +62,33 @@ final class ImageStore {
                     //Current upload progress of file
                     print("Upload Progress: \(progress.fractionCompleted)")
                 })
-                .responseJSON(completionHandler: { data in
-print(data)                })
+        .responseJSON { response in
+            switch response.result {
+            case .success(let value):
+                print("Response JSON: \(value)")
+                // Handle the successful parsing of JSON here
+
+            case .failure(let error):
+                print("Error: \(error)")
+                // This prints the error if the request failed
+            }
+
+            // Print status code and headers
+            if let httpResponse = response.response {
+                print("Status Code: \(httpResponse.statusCode)")
+                print("Headers:")
+                for (header, value) in httpResponse.allHeaderFields {
+                    print("\(header): \(value)")
+                }
+            }
+
+            // Optional: Print raw response data as a string
+            if let data = response.data, let responseString = String(data: data, encoding: .utf8) {
+                print("Raw Response Data: \(responseString)")
+            }
+        }
+//                .responseJSON(completionHandler: { data in
+//print(data)                })
         
       return nil  //.validate().serializingData().value
     }
