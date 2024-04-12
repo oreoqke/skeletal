@@ -226,7 +226,7 @@ struct ItinerarySingleEntryExpandedView: View {
                 Spacer()
                 
                 Button(action: {
-                    itineraryEntries.removeLandmark(index: index)
+                    itineraryEntries.removeLandmark(id: landmark.id)
                 }) {
                     Text("Delete Landmark")
                         .font(Font.body)

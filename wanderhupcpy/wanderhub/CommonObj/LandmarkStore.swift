@@ -95,12 +95,12 @@ final class LandmarkStore: ObservableObject {
 //    private let serverUrl = "https://3.22.222.79/"
     
     // TODO: ADD AUTHORIZATION. USE WanderHubID.shared.id TO SEND REQUEST TO BACKEND
-    func removeLandmark(index: Int) {
+    func removeLandmark(id: String) {
         
         // TODO: Call backend to remove the landmark from the itinerary
         
         
-        landmarks.remove(at: index)
+        landmarks.removeAll{ $0.id == id }
     }
     
 
