@@ -106,7 +106,7 @@ struct CameraView: View {
             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
         }
         .sheet(isPresented: $showAudio, content: {
-            AudioView(isPresented: $showAudio, autoPlay: false)
+            AudioView(isPresented: $showAudio)
         })
     }
     
