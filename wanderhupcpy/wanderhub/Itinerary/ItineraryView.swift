@@ -245,8 +245,91 @@ struct ItinerarySingleEntryExpandedView: View {
     }
 }
 
+struct DayView: View {
+    @Binding var day: Int
+    
+    
+    @ObservedObject var viewModel: NavigationControllerViewModel
+    // moving a landmark around
+    @State var draggedLandmark: Landmark?
+    
+    // expanding information on individual landmark
+    @State var expandedLandmark: Landmark?
+    
+    @StateObject var itineraryEntries = LandmarkStore.shared
+    
+    @State var landmarks: [Landmark] = []
+    
+    var body: some View {
+        // itinerary list
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 10) {
+                ForEach(Array(landmarks.enumerated()), id: \.element.id) { index, landmark in
+
+                    Group {
+                        if (self.expandedLandmark?.id == landmark.id)
+                        {
+                            ItinerarySingleEntryExpandedView(index: index, landmark: $landmarks[index], viewModel: viewModel, itineraryEntries: itineraryEntries)
+                        }
+                        else
+                        {
+                            ItinerarySingleEntryView(index: index, landmark: $landmarks[index])
+                        }
+                      }
+                
+                        .onDrag {
+                            self.draggedLandmark = landmark
+                            return NSItemProvider()
+                        }
+                        .onDrop(
+                            of: [.text],
+                            delegate: ItineraryDropViewDelegate(
+                                destinationLandmark: landmark,
+                                landmarks: $landmarks,
+                                draggedLandmark: $draggedLandmark
+                            ))
+                    
+                        .onTapGesture(count: 1) {
+                            self.expandedLandmark = landmark
+                        }
+                }
+            }
+        }
+        .onAppear{
+            landmarks = getDay(day: day)
+            print("\(landmarks)")
+        }
+        .onChange(of: day, initial: true, {
+            landmarks = getDay(day: day)
+        })
+        .refreshable {
+            // This refreshes the entire itinerary
+            await itineraryEntries.getLandmarks(day: day)
+            //this selects the places recommended for the day
+        }
+        .padding(.horizontal)
+    }
+    
+    //Return Landmarks for a specific day
+    func getDay(day: Int)-> [Landmark] {
+        var results: [Landmark] = []
+        for landmark in itineraryEntries.landmarks {
+            if landmark.Day2Visit == day {
+                results.append(landmark)
+            }
+        }
+        return results
+    }
+    
+}
+
+
+
 
 struct ItineraryView: View {
+    
+    @State var days = [1,2,3,4,5,6,7, 9, 10, 11, 12]
+    @State var selectedDay = 1
     
     @ObservedObject var viewModel: NavigationControllerViewModel
     
@@ -258,53 +341,50 @@ struct ItineraryView: View {
     
     @StateObject var itineraryEntries = LandmarkStore.shared
     
+    @State var newDescription: String = ""
+    
+    
     var body: some View {
         
         VStack {
             
             ItineraryHeaderView()
-            Spacer()
-            
-            // itinerary list
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 10) {
-                    ForEach(Array(itineraryEntries.landmarks.enumerated()), id: \.element.id) { index, landmark in
-
-                        Group {
-                            if (self.expandedLandmark?.id == landmark.id)
-                            {
-                                ItinerarySingleEntryExpandedView(index: index, landmark: $itineraryEntries.landmarks[index], viewModel: viewModel, itineraryEntries: itineraryEntries)
-                            }
-                            else
-                            {
-                                ItinerarySingleEntryView(index: index, landmark: $itineraryEntries.landmarks[index])
-                            }
-                          }
-                    
-                            .onDrag {
-                                self.draggedLandmark = landmark
-                                return NSItemProvider()
-                            }
-                            .onDrop(
-                                of: [.text],
-                                delegate: ItineraryDropViewDelegate(
-                                    destinationLandmark: landmark,
-                                    landmarks: $itineraryEntries.landmarks,
-                                    draggedLandmark: $draggedLandmark
-                                ))
-                        
-                            .onTapGesture(count: 1) {
-                                self.expandedLandmark = landmark
-                            }
+            ScrollView(.horizontal, showsIndicators: false){
+                HStack{
+                    Spacer()
+                    ForEach(days, id: \.self) { day in
+                        Button(action: {
+                            print("\(day) was tapped")
+                            selectedDay = day
+                        }) {
+                            Text("\(day)")
+                                .foregroundColor(.white)
+                                .padding()
+                                .background(Color.blue)
+                                .cornerRadius(10)
+                        }
+                        Spacer()
                     }
                 }
             }
-            .refreshable {
-                await itineraryEntries.getLandmarks()
-            }
-            .padding(.horizontal)
+            Spacer()
+            DayView(day: $selectedDay, viewModel: viewModel)
+            Spacer()
+            Text("Add new destation")
+                .font(.title)
+                .fontWeight(.semibold)
+                .foregroundColor(titleCol)
             
-            
+            TextField("Describe what you want to visit", text: $newDescription)
+                .autocapitalization(.none)
+                .foregroundColor(greyCol)
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(lineWidth: 1)
+                        .foregroundColor(greyCol)
+                )
+                .padding(.horizontal, 40)
         }
         .background(backCol)
         Spacer()

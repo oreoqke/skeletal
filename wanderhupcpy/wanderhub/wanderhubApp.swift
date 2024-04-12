@@ -18,7 +18,7 @@ struct wanderhubApp: App {
 //        }
         UserDefaults.standard
         Task {
-            await LandmarkStore.shared.getLandmarks()
+            await LandmarkStore.shared.getLandmarks(day: 1)
         }
     }
     
