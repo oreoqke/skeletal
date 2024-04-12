@@ -18,9 +18,17 @@ struct CameraView: View {
     @State private var landmark_name: String? = nil
     private let username = "testing"
     
+    
+    @State private var showAudio = false
+    
     var body: some View {
         VStack {
             HStack{
+                Button {
+                    showAudio.toggle()
+                } label: {
+                    Text("Audio Interface")
+                }
                 Spacer()
                 Button(action: submitAction) {
                     Image(systemName: "paperplane")
@@ -97,6 +105,9 @@ struct CameraView: View {
         .onTapGesture {
             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
         }
+        .sheet(isPresented: $showAudio, content: {
+            AudioView(isPresented: $showAudio, autoPlay: false)
+        })
     }
     
     @ViewBuilder
