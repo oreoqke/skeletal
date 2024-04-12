@@ -107,11 +107,8 @@
 			children = (
 				0412BAE12BAFF3BF00991ED3 /* GeoData.swift */,
 				0412BAE22BAFF3BF00991ED3 /* Globals.swift */,
-				04063CEB2BB8FF76008ECD82 /* APIKey.swift */,
 				04063CED2BB8FF7E008ECD82 /* AVFSpeech.swift */,
 				0412BAE32BAFF3BF00991ED3 /* ImageData.swift */,
-				041D3F2B2BC8A7690031C21F /* AudioPlayer.swift */,
-				041D3F2D2BC8E50D0031C21F /* AudioView.swift */,
 				0412BAE42BAFF3BF00991ED3 /* Landmark.swift */,
 				0412BAE52BAFF3BF00991ED3 /* LandmarkStore.swift */,
 			);
@@ -121,7 +118,10 @@
 		0412BAEA2BAFF3BF00991ED3 /* IdentifyLandmark */ = {
 			isa = PBXGroup;
 			children = (
+				041D3F2D2BC8E50D0031C21F /* AudioView.swift */,
+				04063CEB2BB8FF76008ECD82 /* APIKey.swift */,
 				0412BAE72BAFF3BF00991ED3 /* CameraView.swift */,
+				041D3F2B2BC8A7690031C21F /* AudioPlayer.swift */,
 				0412BAE82BAFF3BF00991ED3 /* ImageStore.swift */,
 				0412BAE92BAFF3BF00991ED3 /* Media.swift */,
 			);
