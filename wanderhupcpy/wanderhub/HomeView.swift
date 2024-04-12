@@ -142,16 +142,23 @@ struct HomeView: View {
                     .cornerRadius(10)
                     .offset(x: 0, y: 0)
                 
-                Button(action: {
-                    viewmodel.viewState = ViewState.itinerary
-                    viewmodel.isPresented = true
-                    viewmodel.NavigatingToCurrentTrip = true
-                }) {
+                NavigationLink(destination: ItineraryView(viewModel: viewmodel)) {
                     Text("Go to current trip")
                         .font(Font.custom("Poppins", size: 16).weight(.medium))
                         .foregroundColor(Color(red: 0.96, green: 0.40, blue: 0.33))
-                    
                 }
+                
+                // Switch it if
+//                Button(action: {
+//                    viewmodel.viewState = ViewState.itinerary
+//                    viewmodel.isPresented = true
+//                    viewmodel.NavigatingToCurrentTrip = true
+//                }) {
+//                    Text("Go to current trip")
+//                        .font(Font.custom("Poppins", size: 16).weight(.medium))
+//                        .foregroundColor(Color(red: 0.96, green: 0.40, blue: 0.33))
+//                    
+//                }
             }
             
             ZStack() {

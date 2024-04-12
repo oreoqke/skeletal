@@ -37,6 +37,7 @@
 		0412BB1E2BAFF3C000991ED3 /* wanderhubApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0412BB022BAFF3BF00991ED3 /* wanderhubApp.swift */; };
 		041D3F2C2BC8A7690031C21F /* AudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041D3F2B2BC8A7690031C21F /* AudioPlayer.swift */; };
 		041D3F2E2BC8E50D0031C21F /* AudioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041D3F2D2BC8E50D0031C21F /* AudioView.swift */; };
+		041D3F322BC9C2DB0031C21F /* LandmarkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041D3F312BC9C2DB0031C21F /* LandmarkView.swift */; };
 		043D03A82BB1BD5900D6E6EC /* Test1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 043D03A72BB1BD5900D6E6EC /* Test1.swift */; };
 		25870D3F2BB0C62300F35B18 /* UserProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25870D3E2BB0C62300F35B18 /* UserProfileView.swift */; };
 		25870D412BB0CB6B00F35B18 /* UserHistoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25870D402BB0CB6B00F35B18 /* UserHistoryStore.swift */; };
@@ -79,6 +80,7 @@
 		0412BB022BAFF3BF00991ED3 /* wanderhubApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = wanderhubApp.swift; sourceTree = "<group>"; };
 		041D3F2B2BC8A7690031C21F /* AudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayer.swift; sourceTree = "<group>"; };
 		041D3F2D2BC8E50D0031C21F /* AudioView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioView.swift; sourceTree = "<group>"; };
+		041D3F312BC9C2DB0031C21F /* LandmarkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandmarkView.swift; sourceTree = "<group>"; };
 		043D03A72BB1BD5900D6E6EC /* Test1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Test1.swift; sourceTree = "<group>"; };
 		25870D3E2BB0C62300F35B18 /* UserProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileView.swift; sourceTree = "<group>"; };
 		25870D402BB0CB6B00F35B18 /* UserHistoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserHistoryStore.swift; sourceTree = "<group>"; };
@@ -110,6 +112,7 @@
 				04063CED2BB8FF7E008ECD82 /* AVFSpeech.swift */,
 				0412BAE32BAFF3BF00991ED3 /* ImageData.swift */,
 				0412BAE42BAFF3BF00991ED3 /* Landmark.swift */,
+				041D3F312BC9C2DB0031C21F /* LandmarkView.swift */,
 				0412BAE52BAFF3BF00991ED3 /* LandmarkStore.swift */,
 			);
 			path = CommonObj;
@@ -343,6 +346,7 @@
 				4ED93CAD2BB0B38F0053D2EC /* searchBarView.swift in Sources */,
 				25870D412BB0CB6B00F35B18 /* UserHistoryStore.swift in Sources */,
 				04063CEC2BB8FF76008ECD82 /* APIKey.swift in Sources */,
+				041D3F322BC9C2DB0031C21F /* LandmarkView.swift in Sources */,
 				25870D3F2BB0C62300F35B18 /* UserProfileView.swift in Sources */,
 				0412BB102BAFF3C000991ED3 /* LocManager.swift in Sources */,
 				0412BB1E2BAFF3C000991ED3 /* wanderhubApp.swift in Sources */,

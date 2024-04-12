@@ -228,11 +228,23 @@ struct ItinerarySingleEntryExpandedView: View {
                 Button(action: {
                     itineraryEntries.removeLandmark(id: landmark.id)
                 }) {
-                    Text("Delete Landmark")
+                    Text("Delete")
                         .font(Font.body)
                 }
                 .padding()
                 .background(Color(red: 0.5, green: 0, blue: 0))
+                .foregroundStyle(.white)
+                .clipShape(Capsule())
+                
+                Spacer()
+                
+                NavigationLink(destination: LandmarkView(viewModel: viewModel,
+                                                         landmark: $landmark)){
+                    Text("More...")
+                        .font(Font.body)
+                }
+                .padding()
+                .background(Color(.systemBlue))
                 .foregroundStyle(.white)
                 .clipShape(Capsule())
             }
