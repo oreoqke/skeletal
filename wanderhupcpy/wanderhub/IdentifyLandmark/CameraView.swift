@@ -54,7 +54,9 @@ struct CameraView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .sheet(isPresented: $showInfoPopup, content: {
-                    BottomSheetInfoView(landmarkName: landmarkName, landmarkInfo: landmarkInfo)
+                    BottomSheetInfoView(landmarkName: landmarkName,
+                                        landmarkInfo: landmarkInfo,
+                                        showInfoPopup: $showInfoPopup)
                         .presentationDetents([.medium, .large])
                 })
                 
@@ -164,9 +166,11 @@ struct CameraView: View {
 struct BottomSheetInfoView : View {
     let landmarkName: String?
     let landmarkInfo: String?
+    @Binding var showInfoPopup: Bool
     
     var body: some View {
         VStack(spacing: 10) {
+            AudioView(isPresented: $showInfoPopup)
             if let name = landmarkName, let info = landmarkInfo {
                 Text(name)
                     .font(.title)
@@ -181,6 +185,7 @@ struct BottomSheetInfoView : View {
             } else {
                 ProgressView()
             }
+            Spacer()
         }
         .padding()
         .background(Color.white)
