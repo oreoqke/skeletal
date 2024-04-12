@@ -20,7 +20,7 @@ final class ImageStore {
     // instances can be created
     private(set) var chatts = [ImageData]()
     private let nFields = Mirror(reflecting: ImageData()).children.count
-        
+    
     // TODO: ADD AUTHORIZATION. USE WanderHubID.shared.id TO SEND REQUEST TO BACKEND
     func postImage(_ imagedata: ImageData, image: UIImage?) async -> Data? {
         guard let apiUrl = URL(string: "\(serverUrl)post_landmarks/") else {
@@ -31,14 +31,16 @@ final class ImageStore {
         guard let token = UserDefaults.standard.string(forKey: "usertoken") else {
             return nil
         }
-        print(token)
-        let headers : HTTPHeaders = [
-                    "Authorization": "Bearer \(token)",
-                    "Accept": "application/json; charset=utf-8",
-                    "Content-Type": "application/json; charset=utf-8" ]
+        //        let plainString = token as NSString
+        //        let plainData = plainString.data(using:NSUTF8StringEncoding)
+        //        let base64String = plainData?.base64EncodedData(options: NSData.Base64EncodingOptions.init(rawValue: 0))
         
-    ///return try? await
-        AF.upload(multipartFormData: { mpFD in
+        let headers : HTTPHeaders = [
+            "Authorization": "Token \(token)",
+            "Accept": "application/json; charset=utf-8",
+            "Content-Type": "application/json; charset=utf-8" ]
+        //print(headers)
+        return try? await AF.upload(multipartFormData: { mpFD in
             if let usernameData = imagedata.username?.data(using: .utf8) {
                 mpFD.append(usernameData, withName: "username")
             }
@@ -56,60 +58,70 @@ final class ImageStore {
             if let image = image?.jpegData(compressionQuality: 1.0) {
                 mpFD.append(image, withName: "image", fileName: "chattImage", mimeType: "image/jpeg")
             }
-
+            
         }, to: apiUrl, method: .post, headers: headers )
         .uploadProgress(queue: .main, closure: { progress in
-                    //Current upload progress of file
-                    print("Upload Progress: \(progress.fractionCompleted)")
-                })
-                .responseJSON(completionHandler: { data in
-print(data)                })
-        
-      return nil  //.validate().serializingData().value
+            //Current upload progress of file
+            print("Upload Progress: \(progress.fractionCompleted)")
+        })
+        .responseJSON(completionHandler: { response in
+            debugPrint(response)
+            if let httpResponse = response.response {
+                print("Status Code: \(httpResponse.statusCode)")
+                print("Headers:")
+                for (header, value) in httpResponse.allHeaderFields {
+                    print("\(header): \(value)")
+                }
+            }
+            
+        }).validate().serializingData().value
     }
-        
-        func getLandmarkName() async -> String? {
-            //let landmark_name: String?
-            
-            guard let getImageUrl = URL(string: "\(serverUrl)get_landmark/") else {
-                print("getImageInfo: Bad URL")
-                return nil
-            }
-            
-            var request = URLRequest(url: getImageUrl)
-            guard let token = UserDefaults.standard.string(forKey: "usertoken") else {
-                return nil
-            }
-            
-            request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
-            request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Accept")
-            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization") // todo bug may be here!
-            request.httpMethod = "POST"
     
+    func getLandmarkName() async -> String? {
+        //let landmark_name: String?
         
-            do {
-                let (data, response) = try await URLSession.shared.data(for: request)
-                
-                if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
-                    print("HTTP STATUS: \(httpStatus.statusCode)")
-                    return nil
+        guard let getImageUrl = URL(string: "\(serverUrl)get_landmarks/") else {
+            print("getImageInfo: Bad URL")
+            return nil
+        }
+        
+        var request = URLRequest(url: getImageUrl)
+        guard let token = UserDefaults.standard.string(forKey: "usertoken") else {
+            return nil
+        }
+        
+        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Accept")
+        request.setValue("Token \(token)", forHTTPHeaderField: "Authorization") // todo bug may be here!
+        request.httpMethod = "GET"
+        
+        
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            
+            if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
+                print("HTTP STATUS: \(httpStatus.statusCode)")
+                print("Headers:")
+                for (header, value) in httpStatus.allHeaderFields {
+                    print("\(header): \(value)")
                 }
-
-                guard let jsonObj = try? JSONSerialization.jsonObject(with: data) as? [String:Any] else {
-                    print("getImageAndAddToDb: failed JSON deserialization")
-                    return nil
-                }
-                
-                guard let landmark_name = jsonObj["landmarks_info"] as? String else {
-                    return nil
-                }
-                print("reached here atleast", landmark_name)
-                return landmark_name
-            } catch {
-                print("Login Networking Error")
                 return nil
             }
+            
+            guard let jsonObj = try? JSONSerialization.jsonObject(with: data) as? [String:Any] else {
+                print("getImageAndAddToDb: failed JSON deserialization")
+                return nil
+            }
+            
+            guard let landmark_name = jsonObj["landmarks_info"] as? String else {
+                return nil
+            }
+            return landmark_name
+        } catch {
+            print("Login Networking Error")
+            return nil
         }
+    }
     
     func addLandmarkToUserHistory(landmark_name: String) async -> Void {
         guard let getImageUrl = URL(string: "\(serverUrl)add-user-landmark") else {
@@ -126,7 +138,7 @@ print(data)                })
         request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Accept")
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization") // todo bug may be here!
         request.httpMethod = "POST"
-    
+        
         let jsonObj = ["landmark_name": landmark_name]
         guard let jsonData = try? JSONSerialization.data(withJSONObject: jsonObj) else {
             print("addLandmarkToUserHistory: jsonData serialization error")
@@ -134,7 +146,7 @@ print(data)                })
         }
         
         request.httpBody = jsonData
-    
+        
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
             
@@ -158,27 +170,6 @@ print(data)                })
     
     
     
-
-    // Helper function to parse GeoData from a string
-    private func parseGeoData(from geoDataString: String?) -> GeoData? {
-        guard let geoDataString = geoDataString else { return nil }
-        
-        let components = geoDataString.components(separatedBy: ",")
-        guard components.count >= 5 else { return nil }
-        
-        var geoData = GeoData()
-        if let lat = Double(components[0]), let lon = Double(components[1]) {
-            geoData.lat = lat
-            geoData.lon = lon
-            geoData.place = components[2]
-            geoData.facing = components[3]
-            geoData.speed = components[4]
-            return geoData
-        } else {
-            return nil
-        }
-    }
-
     
     
 }

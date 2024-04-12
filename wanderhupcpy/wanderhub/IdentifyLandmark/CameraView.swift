@@ -5,18 +5,22 @@
 //  Created by Neha Tiwari on 2/5/24.
 //
 import SwiftUI
+import UIKit
 
 struct CameraView: View {
     @ObservedObject var viewModel: NavigationControllerViewModel
     
-    //private let username = UserDefaults.standard.string(forKey: "username")
-    @State private var message = "Some short sample text."
+    private let username = UserDefaults.standard.string(forKey: "username")
+    //@State private var message = "Some short sample text."
     @State private var image: UIImage? = nil
     @State private var videoUrl: URL? = nil
     @State private var isPresenting = false
     @State private var sourceType: UIImagePickerController.SourceType? = nil
     @State private var landmark_name: String? = nil
-    private let username = "testing"
+    @State private var landmarkName: String? = nil
+    @State private var landmarkInfo: String? = nil
+    @State var showInfoPopup = false
+    
     
     var body: some View {
         VStack {
@@ -29,10 +33,6 @@ struct CameraView: View {
                 }
                 .foregroundColor(.black)
             }
-//            Text("Hello \(User.shared.username ?? "User")")
-//                .padding(.top, 30.0)
-//                .foregroundColor(titleCol)
-//                .font(Font.custom("Poppins", size: 26).weight(.semibold))
             Spacer().frame(height:200)
             VStack () {
                 GeometryReader { geometry in
@@ -43,17 +43,22 @@ struct CameraView: View {
                             .frame(height: geometry.size.height * 0.5)
                             .frame(width: geometry.size.width * 0.5)
                             .frame(maxWidth: .infinity, alignment: .center)
-//                            .padding(.trailing, 18)
                     }
                     
-                    // Display landmark name if available
-                               if let landmark_name {
-                                   Text("Landmark: \(landmark_name)")
-                                       .font(.headline)
-                                       .padding(.top, 10)
-                               }
-                               
+                    
                 }
+                
+                Button("Tap me") {
+                    showInfoPopup.toggle()
+                    
+                }
+                .buttonStyle(.borderedProminent)
+                .sheet(isPresented: $showInfoPopup, content: {
+                    BottomSheetInfoView(landmarkName: landmarkName, landmarkInfo: landmarkInfo)
+                        .presentationDetents([.medium, .large])
+                })
+                
+                
             }
             Spacer().frame(height:100)
             HStack(spacing: 23) {
@@ -81,16 +86,13 @@ struct CameraView: View {
                 
             }
             Spacer().frame(height:25)
-//            CameraButton()
-//            Spacer().frame(height:100)
-//            AlbumButton()
             
             Spacer()
             ChildNavController(viewModel: viewModel)
         }
         .background(backCol)
         .navigationTitle("Identify Landmark")
-
+        
         .fullScreenCover(isPresented: $isPresenting) {
             ImagePicker(sourceType: $sourceType, image: $image)
         }
@@ -113,27 +115,15 @@ struct CameraView: View {
     func submitAction() {
         
         let geoData = GeoData(lat: 0.0, lon: 0.0, place: "Unknown1", facing: "Unknown1", speed: "Unknown1")
-                let imagedata = ImageData(username: username, timestamp: Date().description, imageUrl: nil, geoData: geoData)
-                
-                // Call the postChatt function to send the post request
-                Task {
-//                    let _ = await ImageStore.shared.postImage(imagedata, image: image)
-//                    if let landmark_name = await ImageStore.shared.getLandmarkName() {
-//                        // add landmark
-//                        confirmed_landmark_name = landmark_name
-//                        let _ = await ImageStore.shared.addLandmarkToUserHistory(landmark_name: landmark_name)
-//                    }
-//                    else {
-//                        // no landmark found
-//                        return
-//                    }
-                    let newChatt = ImageData(username: username, timestamp: Date().description, imageUrl: nil, geoData: geoData)
-                    if  await ImageStore.shared.postImage(newChatt, image: image) != nil {
-                        let landmark_name = await ImageStore.shared.getLandmarkName()
-                        print( "hello1", landmark_name!)
-
-                    }
-                }
+        Task {
+            let newChatt = ImageData(username: username, timestamp: Date().description, imageUrl: nil, geoData: geoData)
+            if let returnedLandmark = await ImageStore.shared.postImage(newChatt, image: image) {
+                let landmarkName = returnedLandmark.name
+                let landmarkInfo = returnedLandmark.info
+                self.landmarkName = landmarkName
+                self.landmarkInfo = landmarkInfo
+            }
+        }
         
     }
     
@@ -146,10 +136,10 @@ struct CameraView: View {
             HStack{
                 Image(systemName: "camera")
                     .scaleEffect(1.2)
-            Text("Take picture")
+                Text("Take picture")
             }
             .foregroundColor(orangeCol)
-            }
+        }
     }
     
     @ViewBuilder
@@ -162,10 +152,37 @@ struct CameraView: View {
                 
                 Image(systemName: "photo.on.rectangle")
                     .scaleEffect(1.2)
-            
-            Text("Camera Roll")
+                
+                Text("Camera Roll")
             }}
         .foregroundColor(orangeCol)
     }
 }
 
+struct BottomSheetInfoView : View {
+    let landmarkName: String?
+    let landmarkInfo: String?
+    
+    var body: some View {
+        VStack(spacing: 10) {
+            if let name = landmarkName, let info = landmarkInfo {
+                Text(name)
+                    .font(.title)
+                    .font(Font.custom("Poppins", size: 16).weight(.semibold))
+                    .foregroundColor(.black)
+                ScrollView {
+                    Text(info)
+                        .font(.body)
+                        .font(Font.custom("Poppins", size: 16))
+                }
+                .frame(maxHeight: .infinity)
+            } else {
+                ProgressView()
+            }
+        }
+        .padding()
+        .background(Color.white)
+        .cornerRadius(20)
+        .shadow(radius: 5)
+    }
+}
