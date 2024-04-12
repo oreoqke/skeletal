@@ -302,6 +302,9 @@ struct DayView: View {
         .onChange(of: day, initial: true, {
             landmarks = getDay(day: day)
         })
+        .onChange(of: itineraryEntries.landmarks, initial: false, {
+            landmarks = getDay(day: day)
+        })
         .refreshable {
             // This refreshes the entire itinerary
             await itineraryEntries.getLandmarks(day: day)

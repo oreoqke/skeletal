@@ -10,10 +10,10 @@ import Foundation
 
 struct BookingView: View {
     @ObservedObject var viewModel: NavigationControllerViewModel
-    @State private var destination: String = ""
-    @State private var city: String = ""
-    @State private var country: String = ""
-    @State private var interests: String = ""
+    @State var destination: String = ""
+    @State var city: String = ""
+    @State var country: String = ""
+    @State var interests: String = ""
     @State private var startDate: Date = Date()
     @State private var endDate: Date = Date()
     @State private var showingAlert = false

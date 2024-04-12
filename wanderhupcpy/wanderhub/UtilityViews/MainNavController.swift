@@ -14,7 +14,11 @@ class NavigationControllerViewModel: ObservableObject {
     @Published var viewState: ViewState = .home
     @Published var isPresented: Bool = false
     
+    //to go to current trip from the HomeView
     @Published var NavigatingToCurrentTrip = false
+    
+    // To go to booking from the suggested destinations
+    @Published var NavigatingToBooking = false
     
     func itineraryDirectNavigation(landmark: Landmark) {
         viewState = .map(landmark)
