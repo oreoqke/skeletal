@@ -131,44 +131,83 @@ struct ItineraryHeaderView: View {
     }
 }
 
+struct RatingView: View {
+    @Binding var landmark: Landmark // The rating value that the view is bound to
+
+    var maximumRating = 5 // The maximum rating value
+    var offImage: Image? // Image used when the star is not selected
+    var onImage = Image(systemName: "star.fill") // Image used when the star is selected
+    var offColor = Color.gray // Color used when the star is not selected
+    var onColor = Color.yellow // Color used when the star is selected
+
+    var body: some View {
+        HStack{
+            //Spacer()
+            ForEach(1...maximumRating, id: \.self) { number in
+                image(for: number)
+                    .foregroundColor(number > landmark.rating ? offColor : onColor)
+                    .scaleEffect(0.5)
+                    .padding(.horizontal, -6)
+            }
+            Spacer()
+        }
+    }
+
+    private func image(for number: Int) -> Image {
+        if number > landmark.rating {
+            return offImage ?? onImage
+        } else {
+            return onImage
+        }
+    }
+}
+
 struct ItinerarySingleEntryView: View {
     
     @State var index: Int
     @Binding var landmark: Landmark
     
     var body: some View {
-        HStack {
-            VStack {
+        VStack{
+            HStack {
+                VStack {
+                    // Landmark Name
+                    TextField("", text: Binding (get: {landmark.name ?? ""}, set: { _ in}))
+                        .font(Font.title2)
+                        .foregroundColor(Color(red: 0.5, green: 0.5, blue: 0.5, opacity: 1))
+                        .disabled(/*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
+                    
+                    
+                    // Optional Description Message
+                    TextField("", text: Binding (get: {landmark.message ?? ""}, set: { _ in}))
+                        .font(Font.body)
+                        .foregroundColor(Color(red: 0.7, green: 0.7, blue: 0.7, opacity: 1))
+                        .disabled(/*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
+                }
                 
-                // Landmark Name
-                TextField("", text: Binding (get: {landmark.name ?? ""}, set: { _ in}))
-                    .font(Font.title2)
-                    .foregroundColor(Color(red: 0.5, green: 0.5, blue: 0.5, opacity: 1))
-                    .disabled(/*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
-                
-                // Optional Description Message
-                TextField("", text: Binding (get: {landmark.message ?? ""}, set: { _ in}))
-                    .font(Font.body)
-                    .foregroundColor(Color(red: 0.7, green: 0.7, blue: 0.7, opacity: 1))
-                    .disabled(/*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
+                Button(action: {
+                    landmark.favorite.toggle()
+                    
+                }) { // closure dynamically draws favorite star
+                    landmark.favorite ?
+                    Image(systemName: "star.fill")
+                        .foregroundColor(Color.yellow) :
+                    Image(systemName: "star")
+                        .foregroundColor(Color.blue)
+                }
             }
-            Spacer()
-            
-            Button(action: {
-                landmark.favorite.toggle()
-                
-            }) { // closure dynamically draws favorite star
-                landmark.favorite ?
-                Image(systemName: "star.fill")
-                    .foregroundColor(Color.yellow) :
-                Image(systemName: "star")
-                    .foregroundColor(Color.blue)
-            }
+            Text("Your Rating:")
+                .font(.system(size: 15))
+                .foregroundColor(Color(red: 0.7, green: 0.7, blue: 0.7, opacity: 1))
+                .frame(maxWidth: .infinity, alignment: .leading)
+            RatingView(landmark: $landmark)
         }
         .padding()
         .background(Color(red: 0.9, green: 0.9, blue: 0.9, opacity: 1))
         .cornerRadius(8)
     }
+    
+    
 }
 
 struct ItinerarySingleEntryExpandedView: View {

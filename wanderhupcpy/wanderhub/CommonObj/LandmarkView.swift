@@ -43,18 +43,20 @@ struct LandmarkView: View {
 
     @ViewBuilder
     private func LandmarkInfo() -> some View {
-        Text("\(landmark.name)")
+        Text("\(landmark.name!)")
             .foregroundColor(Color(.systemBlue))
             .fontWeight(.bold)
             .font(.system(size: 24))
             .padding()
             .frame(maxWidth: .infinity, alignment: .leading)
-        Text("\(landmark.message)")
+        if let message = landmark.message {
+            Text("\(message)")
                 .foregroundColor(Color(.systemGray))
                 .fontWeight(.bold)
                 .font(.system(size: 18))
                 .padding()
                 .frame(maxWidth: .infinity, alignment: .leading)
+        }
     }
     
     @ViewBuilder
