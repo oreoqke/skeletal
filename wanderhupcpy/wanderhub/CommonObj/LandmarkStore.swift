@@ -15,7 +15,7 @@ final class LandmarkStore: ObservableObject {
     // instances can be created
     @Published var landmarks = [Landmark]()
     // TODO: FIXME get rid of this and fix setters and getters
-    
+
     // private constructor (we don't actually want instances of this since dummy data)
     private init() {
         
@@ -25,23 +25,70 @@ final class LandmarkStore: ObservableObject {
             Landmark(name: "Bell Tower", 
                      message: "Ding Dong",
                      timestamp: "now",
-                     geodata: GeoData(lat: 42.2743155694, lon: -83.736413721)),
+                     geodata: GeoData(lat: 42.2743155694, lon: -83.736413721),
+                     Day2Visit:  1,
+                     rating: 3),
             
             // UMich
             Landmark(name: "University of Michigan - Ann Arbor", 
                      timestamp: "now",
-                     geodata: GeoData(lat:  42.278564, lon: -83.737998)),
+                     geodata: GeoData(lat:  42.278564, lon: -83.737998),
+                     Day2Visit:  1,
+                     rating: 3),
             
             // Big House
             Landmark(name: "The Big House", 
                      message: "Hail to The Victors!",
                      timestamp: "now",
-                     geodata: GeoData(lat: 42.265649, lon: -83.748443)),
+                     geodata: GeoData(lat: 42.265649, lon: -83.748443),
+                     Day2Visit:  1,
+                     rating: 3),
             
             // Arb
             Landmark(name: "Nichols Arboretum", 
                      timestamp: "now",
-                     geodata: GeoData(lat: 42.280800, lon: -83.726784))
+                     geodata: GeoData(lat: 42.280800, lon: -83.726784),
+                     Day2Visit:  1),
+            Landmark(name: "The Diag",
+                     message: "Center of campus life",
+                     timestamp: "now",
+                     geodata: GeoData(lat: 42.276045, lon: -83.738211),
+                     Day2Visit:  2),
+            // Gerald R. Ford Presidential Library
+            Landmark(name: "Gerald R. Ford Presidential Library",
+                     message: "A glimpse into U.S. presidential history",
+                     timestamp: "now",
+                     geodata: GeoData(lat: 42.280791, lon: -83.739841),
+                     Day2Visit:  2),
+
+            // Kelsey Museum of Archaeology
+            Landmark(name: "Kelsey Museum of Archaeology",
+                     message: "Ancient and medieval artifacts on display",
+                     timestamp: "now",
+                     geodata: GeoData(lat: 42.275652, lon: -83.735666),
+                     Day2Visit:  3),
+
+            // Matthaei Botanical Gardens
+            Landmark(name: "Matthaei Botanical Gardens",
+                     message: "Explore plant diversity in natural habitats",
+                     timestamp: "now",
+                     geodata: GeoData(lat: 42.299780, lon: -83.662117),
+                     Day2Visit:  4),
+
+            // Power Center for the Performing Arts
+            Landmark(name: "Power Center for the Performing Arts",
+                     message: "Modernist architecture and performing arts venue",
+                     timestamp: "now",
+                     geodata: GeoData(lat: 42.281538, lon: -83.738224),
+                     Day2Visit:  4),
+
+            // Ann Arbor Hands-On Museum
+            Landmark(name: "Ann Arbor Hands-On Museum",
+                     message: "Interactive science and technology exhibits",
+                     timestamp: "now",
+                     geodata: GeoData(lat: 42.280684, lon: -83.747073),
+                     Day2Visit:  4)
+
         ])
     }
     
@@ -51,19 +98,30 @@ final class LandmarkStore: ObservableObject {
 //    private let serverUrl = "https://3.22.222.79/"
     
     // TODO: ADD AUTHORIZATION. USE WanderHubID.shared.id TO SEND REQUEST TO BACKEND
-    func removeLandmark(index: Int) {
+    func removeLandmark(id: String) {
         
         // TODO: Call backend to remove the landmark from the itinerary
         
         
-        landmarks.remove(at: index)
+        landmarks.removeAll{ $0.id == id }
     }
     
+    func submitRating(rating: Int, id: String) async {
+        var landmark2Rate = landmarks.first { $0.id == id }
+        landmark2Rate?.rating = rating
+        
+        //make a post request to rate the landmark
+        
+    }
+    
+
+    
     // TODO: ADD AUTHORIZATION. USE WanderHubID.shared.id TO SEND REQUEST TO BACKEND
-    func getLandmarks() async {
+    func getLandmarks(day: Int?) async {
         // FIX THIS
         // TODO: FIXME IMPLEMENT ME
-        
+
+
         return
         
         //        guard let apiUrl = URL(string: "\(serverUrl)getmaps/") else {

@@ -69,5 +69,6 @@ struct StartupPage: View {
                 }
             }
         }
+        .environment(AudioPlayer())
     }
 }

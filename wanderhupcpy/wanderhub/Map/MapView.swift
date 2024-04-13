@@ -69,9 +69,9 @@ struct InfoView: View {
             if let message = landmark.message {
                 Text(message).padding(EdgeInsets(top: 1, leading: 8, bottom: 0, trailing: 4)).font(.system(size: 14)).lineLimit(2, reservesSpace: true)
             }
-            if let geodata = landmark.geodata {
-                Text("\(geodata.postedFrom)").padding(EdgeInsets(top: 0, leading: 8, bottom: 10, trailing: 4)).font(.system(size: 12)).lineLimit(2, reservesSpace: true)
-            }
+//            if let geodata = landmark.geodata {
+//                Text("\(geodata.postedFrom)").padding(EdgeInsets(top: 0, leading: 8, bottom: 10, trailing: 4)).font(.system(size: 12)).lineLimit(2, reservesSpace: true)
+//            }
         }
         .background {
             Rectangle()

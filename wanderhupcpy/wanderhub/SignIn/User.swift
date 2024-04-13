@@ -49,7 +49,7 @@ class User {
             print("addUser: jsonData serialization error")
             return nil
         }
-        guard let apiUrl = URL(string: "\(serverUrl)signup") else {
+        guard let apiUrl = URL(string: "\(serverUrl)signup/") else {
             print("addUser: Bad URL")
             return nil
         }

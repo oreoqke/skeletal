@@ -35,6 +35,10 @@ final class ImageStore {
         //        let plainData = plainString.data(using:NSUTF8StringEncoding)
         //        let base64String = plainData?.base64EncodedData(options: NSData.Base64EncodingOptions.init(rawValue: 0))
         
+        //        let plainString = token as NSString
+        //        let plainData = plainString.data(using:NSUTF8StringEncoding)
+        //        let base64String = plainData?.base64EncodedData(options: NSData.Base64EncodingOptions.init(rawValue: 0))
+        
         let headers : HTTPHeaders = [
             "Authorization": "Token \(token)",
             "Accept": "application/json; charset=utf-8",
@@ -59,6 +63,7 @@ final class ImageStore {
                 mpFD.append(image, withName: "image", fileName: "chattImage", mimeType: "image/jpeg")
             }
             
+            
         }, to: apiUrl, method: .post, headers: headers )
         .uploadProgress(queue: .main, closure: { progress in
             //Current upload progress of file
@@ -75,7 +80,40 @@ final class ImageStore {
             }
             
         }).validate().serializingData().value
+            //Current upload progress of file
+            print("Upload Progress: \(progress.fractionCompleted)")
+        })
+        .responseJSON(completionHandler: { response in
+            debugPrint(response)
+            if let httpResponse = response.response {
+                print("Status Code: \(httpResponse.statusCode)")
+                print("Headers:")
+                for (header, value) in httpResponse.allHeaderFields {
+                    print("\(header): \(value)")
+                }
+            }
+            
+        }).validate().serializingData().value
     }
+    
+    func getLandmarkName() async -> String? {
+        //let landmark_name: String?
+        
+        guard let getImageUrl = URL(string: "\(serverUrl)get_landmarks/") else {
+            print("getImageInfo: Bad URL")
+            return nil
+        }
+        
+        var request = URLRequest(url: getImageUrl)
+        guard let token = UserDefaults.standard.string(forKey: "usertoken") else {
+            return nil
+        }
+        
+        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Accept")
+        request.setValue("Token \(token)", forHTTPHeaderField: "Authorization") // todo bug may be here!
+        request.httpMethod = "GET"
+        
     
     func getLandmarkName() async -> String? {
         //let landmark_name: String?
@@ -122,6 +160,32 @@ final class ImageStore {
             return nil
         }
     }
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            
+            if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
+                print("HTTP STATUS: \(httpStatus.statusCode)")
+                print("Headers:")
+                for (header, value) in httpStatus.allHeaderFields {
+                    print("\(header): \(value)")
+                }
+                return nil
+            }
+            
+            guard let jsonObj = try? JSONSerialization.jsonObject(with: data) as? [String:Any] else {
+                print("getImageAndAddToDb: failed JSON deserialization")
+                return nil
+            }
+            
+            guard let landmark_name = jsonObj["landmarks_info"] as? String else {
+                return nil
+            }
+            return landmark_name
+        } catch {
+            print("Login Networking Error")
+            return nil
+        }
+    }
     
     func addLandmarkToUserHistory(landmark_name: String) async -> Void {
         guard let getImageUrl = URL(string: "\(serverUrl)add-user-landmark") else {
@@ -139,6 +203,7 @@ final class ImageStore {
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization") // todo bug may be here!
         request.httpMethod = "POST"
         
+        
         let jsonObj = ["landmark_name": landmark_name]
         guard let jsonData = try? JSONSerialization.data(withJSONObject: jsonObj) else {
             print("addLandmarkToUserHistory: jsonData serialization error")
@@ -146,6 +211,7 @@ final class ImageStore {
         }
         
         request.httpBody = jsonData
+        
         
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
@@ -167,6 +233,7 @@ final class ImageStore {
             return
         }
     }
+    
     
     
     

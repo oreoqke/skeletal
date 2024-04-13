@@ -15,6 +15,8 @@ struct Landmark: Identifiable, Hashable {
     var message: String?
     var timestamp: String?
     var geodata: GeoData?
+    var Day2Visit: Int?
+    var rating: Int = 3
     // what other fields are necessary globally? we could have a single fetch call for all data..?
     
     var favorite: Bool = false

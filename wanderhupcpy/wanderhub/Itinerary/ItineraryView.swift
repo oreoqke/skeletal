@@ -10,7 +10,8 @@ import SwiftUI
 import _MapKit_SwiftUI
 
 
-// TODO: remove this but im lazy /shrug
+// TODO: get a date object dynamically from backend
+// takes in format ""DD/MM/YYYY", "hh:mm"
 func getDateObject(_ date: String, _ time: String) -> Date {
     
     var components = DateComponents()
@@ -65,10 +66,7 @@ struct ItineraryDropViewDelegate: DropDelegate {
 
 struct ItineraryHeaderView: View {
     
-    // TODO: build this struct?
-    // @State tripInfo
-    
-    
+    // TODO: get this data from backend
     @State var tripName: String = "Paris"
     @State var tripStartDate: Date = getDateObject("11/11/2023", "00:00")
     @State var tripEndDate:   Date = getDateObject("11/15/2023", "00:00")
@@ -104,7 +102,7 @@ struct ItineraryHeaderView: View {
                     .frame(width: 50.0, height: 50.0)
                     .foregroundColor(Color.yellow)
                 
-//                Text("we need images ;-;\n\t- vivi <3").font(Font.caption)
+                //                Text("we need images ;-;\n\t- vivi <3").font(Font.caption)
             }
             .padding()
             
@@ -133,164 +131,317 @@ struct ItineraryHeaderView: View {
     }
 }
 
+struct RatingView: View {
+    @Binding var landmark: Landmark // The rating value that the view is bound to
+
+    var maximumRating = 5 // The maximum rating value
+    var offImage: Image? // Image used when the star is not selected
+    var onImage = Image(systemName: "star.fill") // Image used when the star is selected
+    var offColor = Color.gray // Color used when the star is not selected
+    var onColor = Color.yellow // Color used when the star is selected
+
+    var body: some View {
+        HStack{
+            //Spacer()
+            ForEach(1...maximumRating, id: \.self) { number in
+                image(for: number)
+                    .foregroundColor(number > landmark.rating ? offColor : onColor)
+                    .scaleEffect(0.5)
+                    .padding(.horizontal, -6)
+            }
+            Spacer()
+        }
+    }
+
+    private func image(for number: Int) -> Image {
+        if number > landmark.rating {
+            return offImage ?? onImage
+        } else {
+            return onImage
+        }
+    }
+}
+
 struct ItinerarySingleEntryView: View {
     
     @State var index: Int
     @Binding var landmark: Landmark
     
     var body: some View {
-        HStack {
-            VStack {
+        VStack{
+            HStack {
+                VStack {
+                    // Landmark Name
+                    TextField("", text: Binding (get: {landmark.name ?? ""}, set: { _ in}))
+                        .font(Font.title2)
+                        .foregroundColor(Color(red: 0.5, green: 0.5, blue: 0.5, opacity: 1))
+                        .disabled(/*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
+                    
+                    
+                    // Optional Description Message
+                    TextField("", text: Binding (get: {landmark.message ?? ""}, set: { _ in}))
+                        .font(Font.body)
+                        .foregroundColor(Color(red: 0.7, green: 0.7, blue: 0.7, opacity: 1))
+                        .disabled(/*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
+                }
                 
-                // Landmark Name
-                TextField("", text: Binding (get: {landmark.name ?? ""}, set: { _ in}))
-                    .font(Font.title2)
-                    .foregroundColor(Color(red: 0.5, green: 0.5, blue: 0.5, opacity: 1))
-                    .disabled(/*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
-                
-                // Optional Description Message
-                TextField("", text: Binding (get: {landmark.message ?? ""}, set: { _ in}))
-                    .font(Font.body)
-                    .foregroundColor(Color(red: 0.7, green: 0.7, blue: 0.7, opacity: 1))
-                    .disabled(/*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
+                Button(action: {
+                    landmark.favorite.toggle()
+                    
+                }) { // closure dynamically draws favorite star
+                    landmark.favorite ?
+                    Image(systemName: "star.fill")
+                        .foregroundColor(Color.yellow) :
+                    Image(systemName: "star")
+                        .foregroundColor(Color.blue)
+                }
             }
-            Spacer()
-            
-            Button(action: {
-                landmark.favorite.toggle()
-                
-            }) { // closure dynamically draws favorite star
-                landmark.favorite ?
-                Image(systemName: "star.fill")
-                    .foregroundColor(Color.yellow) :
-                Image(systemName: "star")
-                    .foregroundColor(Color.blue)
-            }
+            Text("Your Rating:")
+                .font(.system(size: 15))
+                .foregroundColor(Color(red: 0.7, green: 0.7, blue: 0.7, opacity: 1))
+                .frame(maxWidth: .infinity, alignment: .leading)
+            RatingView(landmark: $landmark)
         }
+        .padding()
+        .background(Color(red: 0.9, green: 0.9, blue: 0.9, opacity: 1))
+        .cornerRadius(8)
+    }
+    
+    
+}
+
+struct ItinerarySingleEntryExpandedView: View {
+    
+    @State var index: Int
+    @Binding var landmark: Landmark
+    
+    @ObservedObject var viewModel: NavigationControllerViewModel
+    @StateObject var itineraryEntries = LandmarkStore.shared
+    
+    var body: some View {
+        VStack {
+            HStack {
+                VStack {
+                    
+                    // Landmark Name
+                    TextField("", text: Binding (get: {landmark.name ?? ""}, set: { _ in}))
+                        .font(Font.title2)
+                        .foregroundColor(Color(red: 0.5, green: 0.5, blue: 0.5, opacity: 1))
+                        .disabled(/*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
+                    
+                    // Optional Description Message
+                    TextField("", text: Binding (get: {landmark.message ?? ""}, set: { _ in}))
+                        .font(Font.body)
+                        .foregroundColor(Color(red: 0.7, green: 0.7, blue: 0.7, opacity: 1))
+                        .disabled(/*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
+                    
+                }
+                Spacer()
+                
+                Button(action: {
+                    landmark.favorite.toggle()
+                    
+                }) { // closure dynamically draws favorite star
+                    landmark.favorite ?
+                    Image(systemName: "star.fill")
+                        .foregroundColor(Color.yellow) :
+                    Image(systemName: "star")
+                        .foregroundColor(Color.blue)
+                }
+            }
+            
+            HStack {
+                Button(action: {
+                    viewModel.itineraryDirectNavigation(landmark: landmark)
+                }) {
+                    Text("View on Map")
+                        .font(Font.body)
+                }
+                .padding()
+                .background(Color(red: 0, green: 0.5, blue: 0))
+                .foregroundStyle(.white)
+                .clipShape(Capsule())
+                
+                Spacer()
+                
+                Button(action: {
+                    itineraryEntries.removeLandmark(id: landmark.id)
+                }) {
+                    Text("Delete")
+                        .font(Font.body)
+                }
+                .padding()
+                .background(Color(red: 0.5, green: 0, blue: 0))
+                .foregroundStyle(.white)
+                .clipShape(Capsule())
+                
+                Spacer()
+                
+                NavigationLink(destination: LandmarkView(viewModel: viewModel,
+                                                         landmark: $landmark)){
+                    Text("More...")
+                        .font(Font.body)
+                }
+                .padding()
+                .background(Color(.systemBlue))
+                .foregroundStyle(.white)
+                .clipShape(Capsule())
+            }
+           
+        }
+       
         .padding()
         .background(Color(red: 0.9, green: 0.9, blue: 0.9, opacity: 1))
         .cornerRadius(8)
     }
 }
 
-//struct ItineraryEntriesView : View {
+struct DayView: View {
+    @Binding var day: Int
     
-    //    @State var draggedLandmark: Landmark?
-    //    @StateObject var itineraryEntries = LandmarkStore.shared
-    //
-    //    var body: some View {
-    //
-    //        // itinerary list
-    //        ScrollView(showsIndicators: false) {
-    //            VStack(spacing: 10) {
-    //                ForEach(Array(itineraryEntries.landmarks.enumerated()), id: \.element.id) { index, landmark in
-    //                    ItinerarySingleEntryView(index: index, landmark: $itineraryEntries.landmarks[index])
-    //
-    //                        .onDrag {
-    //                            self.draggedLandmark = landmark
-    //                            return NSItemProvider()
-    //                        }
-    //                        .onDrop(
-    //                            of: [.text],
-    //                            delegate: ItineraryDropViewDelegate(
-    //                                destinationLandmark: landmark,
-    //                                landmarks: $itineraryEntries.landmarks,
-    //                                draggedLandmark: $draggedLandmark
-    //                            ))
-    //
-    //                        .onTapGesture(count: 1) {
-    //                            // TODO: make MapView.selected() with $landmark
-    //                            // TODO: change nav to mapview
-    //                        }
-    //
-    //                        .onTapGesture(count: 2) {
-    //                            itineraryEntries.removeLandmark(index: index)
-    //
-    //                        }
-    //                }
-    //            }
-    //        }
-    //        .refreshable {
-    //            await itineraryEntries.getLandmarks()
-    //        }
-    //        .padding(.horizontal)
-    //
-    //    }
     
-//}
+    @ObservedObject var viewModel: NavigationControllerViewModel
+    // moving a landmark around
+    @State var draggedLandmark: Landmark?
+    
+    // expanding information on individual landmark
+    @State var expandedLandmark: Landmark?
+    
+    @StateObject var itineraryEntries = LandmarkStore.shared
+    
+    @State var landmarks: [Landmark] = []
+    
+    var body: some View {
+        // itinerary list
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 10) {
+                ForEach(Array(landmarks.enumerated()), id: \.element.id) { index, landmark in
+
+                    Group {
+                        if (self.expandedLandmark?.id == landmark.id)
+                        {
+                            ItinerarySingleEntryExpandedView(index: index, landmark: $landmarks[index], viewModel: viewModel, itineraryEntries: itineraryEntries)
+                        }
+                        else
+                        {
+                            ItinerarySingleEntryView(index: index, landmark: $landmarks[index])
+                        }
+                      }
+                
+                        .onDrag {
+                            self.draggedLandmark = landmark
+                            return NSItemProvider()
+                        }
+                        .onDrop(
+                            of: [.text],
+                            delegate: ItineraryDropViewDelegate(
+                                destinationLandmark: landmark,
+                                landmarks: $landmarks,
+                                draggedLandmark: $draggedLandmark
+                            ))
+                    
+                        .onTapGesture(count: 1) {
+                            self.expandedLandmark = landmark
+                        }
+                }
+            }
+        }
+        .onAppear{
+            landmarks = getDay(day: day)
+            print("\(landmarks)")
+        }
+        .onChange(of: day, initial: true, {
+            landmarks = getDay(day: day)
+        })
+        .onChange(of: itineraryEntries.landmarks, initial: false, {
+            landmarks = getDay(day: day)
+        })
+        .refreshable {
+            // This refreshes the entire itinerary
+            await itineraryEntries.getLandmarks(day: day)
+            //this selects the places recommended for the day
+        }
+        .padding(.horizontal)
+    }
+    
+    //Return Landmarks for a specific day
+    func getDay(day: Int)-> [Landmark] {
+        var results: [Landmark] = []
+        for landmark in itineraryEntries.landmarks {
+            if landmark.Day2Visit == day {
+                results.append(landmark)
+            }
+        }
+        return results
+    }
+    
+}
+
+
+
 
 struct ItineraryView: View {
     
+    @State var days = [1,2,3,4,5,6,7, 9, 10, 11, 12]
+    @State var selectedDay = 1
+    
     @ObservedObject var viewModel: NavigationControllerViewModel
     
+    // moving a landmark around
     @State var draggedLandmark: Landmark?
+    
+    // expanding information on individual landmark
+    @State var expandedLandmark: Landmark?
+    
     @StateObject var itineraryEntries = LandmarkStore.shared
+    
+    @State var newDescription: String = ""
+    
     
     var body: some View {
         
         VStack {
             
             ItineraryHeaderView()
-            Spacer()
-            
-            // itinerary list
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 10) {
-                    ForEach(Array(itineraryEntries.landmarks.enumerated()), id: \.element.id) { index, landmark in
-                        ItinerarySingleEntryView(index: index, landmark: $itineraryEntries.landmarks[index])
-                        
-                            .onDrag {
-                                self.draggedLandmark = landmark
-                                return NSItemProvider()
-                            }
-                            .onDrop(
-                                of: [.text],
-                                delegate: ItineraryDropViewDelegate(
-                                    destinationLandmark: landmark,
-                                    landmarks: $itineraryEntries.landmarks,
-                                    draggedLandmark: $draggedLandmark
-                                ))
-                        
-                            .onTapGesture(count: 1) {
-                                viewModel.itineraryDirectNavigation(landmark: landmark)
-                            }
-//                                NavigationView(content: {
-//                                    NavigationLink(destination: Text("Destination")) {     }
-//                                })
-//                            }
-                        
-                            // TODO: make a new gesture
-//                            .onTapGesture(count: 2) {
-//                                itineraryEntries.removeLandmark(index: index)
-//                                
-//                            }
+            ScrollView(.horizontal, showsIndicators: false){
+                HStack{
+                    Spacer()
+                    ForEach(days, id: \.self) { day in
+                        Button(action: {
+                            print("\(day) was tapped")
+                            selectedDay = day
+                        }) {
+                            Text("\(day)")
+                                .foregroundColor(.white)
+                                .padding()
+                                .background(Color.blue)
+                                .cornerRadius(10)
+                        }
+                        Spacer()
                     }
                 }
             }
-            .refreshable {
-                await itineraryEntries.getLandmarks()
-            }
-            .padding(.horizontal)
+            Spacer()
+            DayView(day: $selectedDay, viewModel: viewModel)
+            Spacer()
+            Text("Add new destation")
+                .font(.title)
+                .fontWeight(.semibold)
+                .foregroundColor(titleCol)
             
-            
+            TextField("Describe what you want to visit", text: $newDescription)
+                .autocapitalization(.none)
+                .foregroundColor(greyCol)
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(lineWidth: 1)
+                        .foregroundColor(greyCol)
+                )
+                .padding(.horizontal, 40)
         }
         .background(backCol)
         Spacer()
         ChildNavController(viewModel: viewModel)
     }
-    
 }
-
-//    var body: some View {
-//
-//        // Full Itinerary
-//        VStack {
-//            ItineraryHeaderView()
-//            Spacer()
-//            ItineraryEntriesView()
-//        }
-//        .background(backCol)
-//        Spacer()
-//        ChildNavController(viewModel: viewModel)
-//
-//    }

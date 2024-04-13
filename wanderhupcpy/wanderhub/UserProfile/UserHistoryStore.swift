@@ -32,7 +32,7 @@ class UserHistoryStore {
     
     func getHistory() {
         // Method implementation
-        guard let apiUrl = URL(string: "\(serverUrl)get-user-landmark") else {
+        guard let apiUrl = URL(string: "\(serverUrl)get-user-landmark/") else {
             print("addUser: Bad URL")
             return
         }
@@ -40,11 +40,11 @@ class UserHistoryStore {
         var request = URLRequest(url: apiUrl)
         request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
         request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Accept") // expect response in JSON
-        request.httpMethod = "Get"
+        request.httpMethod = "GET"
         //request.httpBody = jsonData
         
         if let token = UserDefaults.standard.string(forKey: "usertoken") {
-            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+            request.setValue("Token \(token)", forHTTPHeaderField: "Authorization")
         } else {
             return
         }

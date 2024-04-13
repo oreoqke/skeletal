@@ -54,7 +54,9 @@ struct CameraView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .sheet(isPresented: $showInfoPopup, content: {
-                    BottomSheetInfoView(landmarkName: landmarkName, landmarkInfo: landmarkInfo)
+                    BottomSheetInfoView(landmarkName: landmarkName,
+                                        landmarkInfo: landmarkInfo,
+                                        showInfoPopup: $showInfoPopup)
                         .presentationDetents([.medium, .large])
                 })
                 
@@ -118,10 +120,12 @@ struct CameraView: View {
         Task {
             let newChatt = ImageData(username: username, timestamp: Date().description, imageUrl: nil, geoData: geoData)
             if let returnedLandmark = await ImageStore.shared.postImage(newChatt, image: image) {
-               // let landmarkName = returnedLandmark.name
-                let landmarkInfo = returnedLandmark
-               // self.landmarkName = landmarkName
-               // self.landmarkInfo = landmarkInfo
+                //let landmarkName = returnedLandmark.name
+                //let landmarkInfo = returnedLandmark.info
+                let landmarkName = String(data: returnedLandmark, encoding: .utf8)
+                let landmarkInfo = String(data: returnedLandmark, encoding: .utf8)
+                self.landmarkName = landmarkName
+                self.landmarkInfo = landmarkInfo
             }
         }
         
@@ -162,9 +166,11 @@ struct CameraView: View {
 struct BottomSheetInfoView : View {
     let landmarkName: String?
     let landmarkInfo: String?
+    @Binding var showInfoPopup: Bool
     
     var body: some View {
         VStack(spacing: 10) {
+            AudioView(isPresented: $showInfoPopup)
             if let name = landmarkName, let info = landmarkInfo {
                 Text(name)
                     .font(.title)
@@ -179,6 +185,7 @@ struct BottomSheetInfoView : View {
             } else {
                 ProgressView()
             }
+            Spacer()
         }
         .padding()
         .background(Color.white)
