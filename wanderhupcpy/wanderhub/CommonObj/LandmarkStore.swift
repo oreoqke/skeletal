@@ -26,20 +26,23 @@ final class LandmarkStore: ObservableObject {
                      message: "Ding Dong",
                      timestamp: "now",
                      geodata: GeoData(lat: 42.2743155694, lon: -83.736413721),
-                     Day2Visit:  1),
+                     Day2Visit:  1,
+                     rating: 3),
             
             // UMich
             Landmark(name: "University of Michigan - Ann Arbor", 
                      timestamp: "now",
                      geodata: GeoData(lat:  42.278564, lon: -83.737998),
-                     Day2Visit:  1),
+                     Day2Visit:  1,
+                     rating: 3),
             
             // Big House
             Landmark(name: "The Big House", 
                      message: "Hail to The Victors!",
                      timestamp: "now",
                      geodata: GeoData(lat: 42.265649, lon: -83.748443),
-                     Day2Visit:  1),
+                     Day2Visit:  1,
+                     rating: 3),
             
             // Arb
             Landmark(name: "Nichols Arboretum", 

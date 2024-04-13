@@ -17,7 +17,7 @@ struct LandmarkView: View {
     @Environment(\.presentationMode) var presentationMode
     
     @Binding var landmark: Landmark
-    @State var rating: Int = 3
+
     
     var body: some View {
         VStack{
@@ -28,27 +28,33 @@ struct LandmarkView: View {
             Spacer()
             ActionButtons()
         }
-        .onAppear(){
-            rating = landmark.rating ?? 3
+        .onAppear {
+
+        }
+        .onChange(of: landmark){
+            
+//            var landmark2Rate = landmarks.first { $0.id == id }
+//            landmark2Rate?.rating = rating
+            if let index = itineraryEntries.landmarks.firstIndex(where: { $0.id == landmark.id }) {
+                itineraryEntries.landmarks[index].rating = landmark.rating
+            }
         }
     }
 
     @ViewBuilder
     private func LandmarkInfo() -> some View {
-        Text("\(landmark.name!)")
+        Text("\(landmark.name)")
             .foregroundColor(Color(.systemBlue))
             .fontWeight(.bold)
             .font(.system(size: 24))
             .padding()
             .frame(maxWidth: .infinity, alignment: .leading)
-        if let message = landmark.message {
-            Text("\(message)")
+        Text("\(landmark.message)")
                 .foregroundColor(Color(.systemGray))
                 .fontWeight(.bold)
                 .font(.system(size: 18))
                 .padding()
                 .frame(maxWidth: .infinity, alignment: .leading)
-        }
     }
     
     @ViewBuilder
@@ -60,14 +66,14 @@ struct LandmarkView: View {
                 .font(.system(size: 18))
                 .padding()
             Spacer()
-            StarRatingView(rating: $rating)
+            StarRatingView(landmark: $landmark)
                 .padding()
                 .accentColor(.yellow)
         }
         .padding()
         Button(action: {
             Task {
-                await itineraryEntries.submitRating(rating: rating, id: landmark.id)
+                await itineraryEntries.submitRating(rating: landmark.rating, id: landmark.id)
             }
         }) {
             Text("Submit Rating!")
@@ -114,7 +120,7 @@ struct LandmarkView: View {
 
 
 struct StarRatingView: View {
-    @Binding var rating: Int // The rating value that the view is bound to
+    @Binding var landmark: Landmark // The rating value that the view is bound to
 
     var maximumRating = 5 // The maximum rating value
     var offImage: Image? // Image used when the star is not selected
@@ -126,16 +132,16 @@ struct StarRatingView: View {
         HStack {
             ForEach(1...maximumRating, id: \.self) { number in
                 image(for: number)
-                    .foregroundColor(number > rating ? offColor : onColor)
+                    .foregroundColor(number > landmark.rating ? offColor : onColor)
                     .onTapGesture {
-                        rating = number
+                        landmark.rating = number
                     }
             }
         }
     }
 
     private func image(for number: Int) -> Image {
-        if number > rating {
+        if number > landmark.rating {
             return offImage ?? onImage
         } else {
             return onImage
