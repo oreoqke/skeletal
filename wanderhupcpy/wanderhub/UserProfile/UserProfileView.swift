@@ -19,113 +19,84 @@ struct UserProfileView: View {
     
     var body: some View {
         VStack{
-            ZStack() {
-                VStack(alignment: .trailing, spacing: 0) {
-                    HStack(spacing: 12) {
-                        Text("   Settings")
-                            .font(Font.custom("Poppins", size: 16).weight(.medium))
-                            .foregroundColor(Color(red: 0.96, green: 0.40, blue: 0.33))
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                    .padding(EdgeInsets(top: 16, leading: 0, bottom: 16, trailing: 16))
-                    .frame(width: 343)
-                    .background(Color(red: 0.94, green: 0.92, blue: 0.87))
-                    .cornerRadius(10)
-                    
-                    HStack(spacing: 12) {
-                        Text("   Preferences")
-                            .font(Font.custom("Poppins", size: 16).weight(.medium))
-                            .foregroundColor(Color(red: 0.96, green: 0.40, blue: 0.33))
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                    .padding(EdgeInsets(top: 16, leading: 0, bottom: 16, trailing: 16))
-                    .frame(width: 343)
-                    .background(Color(red: 0.94, green: 0.92, blue: 0.87))
-                    
-                    HStack(spacing: 12) {
-                        Text("   FAQs")
-                            .font(Font.custom("Poppins", size: 16).weight(.medium))
-                            .foregroundColor(Color(red: 0.96, green: 0.40, blue: 0.33))
-                            .frame(maxWidth: .infinity, alignment: .leading) //
-                    }
-                    .padding(EdgeInsets(top: 16, leading: 0, bottom: 16, trailing: 16))
-                    .frame(width: 343)
-                    .background(Color(red: 0.94, green: 0.92, blue: 0.87))
-                    .cornerRadius(10)
-                }
-                .frame(width: 356, height: 170)
-                .background(Color(red: 0.94, green: 0.92, blue: 0.87))
-                .cornerRadius(10)
-                .offset(x: -1.50, y: -161)
-                HStack(spacing: 161) {
-                    Text("Hello \(User.shared.username ?? "User")")
-                        .font(Font.custom("Poppins", size: 26).weight(.semibold))
-                        .foregroundColor(Color(red: 0, green: 0.15, blue: 0.71))
-                        .frame(maxWidth: .infinity, alignment: .leading) //
-                }
-                .frame(width: 352, height: 39)
-                .offset(x: 0.50, y: -299.50)
-                
-                VStack(){
-                    Text("    Past Landmarks:")
-                        .font(Font.custom("Poppins", size: 16).weight(.semibold))
-                        .foregroundColor(Color(red: 0.96, green: 0.40, blue: 0.33))
-                        .offset(x: -135.50, y: -47)
-                    
-                    List(userHistory.landmarkVisits.indices, id: \.self) {
-                        LandmarkListRow(visit: userHistory.landmarkVisits[$0])
-                            .listRowSeparator(.hidden)
-                            .listRowBackground(Color(($0 % 2 == 0) ? .systemGray5 : .systemGray6))
-                    }
-                    .listStyle(.plain)
-                    
-                    //                ScrollView {
-                    //                    VStack(spacing: 20) {
-                    //                        ForEach(UserHistoryStore.shared.$landmarkVisits, id: \.landmarkName) { landmarkVisit in
-                    //
-                    //                            HStack {
-                    //                                // Customize your landmark display here
-                    //                                TextField("", text: landmarkVisit.landmarkName)
-                    //                                    .disabled(/*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
-                    //                                    .font(Font.custom("Poppins", size: 14).weight(.semibold))
-                    //                                    .foregroundColor(Color(red: 0, green: 0.15, blue: 0.71))
-                    //
-                    //                                Spacer()
-                    //
-                    //                                TextField("", text: landmarkVisit.city)
-                    //                                    .disabled(/*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
-                    //                                    .font(Font.custom("Poppins", size: 14))
-                    //                                    .foregroundColor(Color(red: 0, green: 0.15, blue: 0.71))
-                    //                                Spacer()
-                    //
-                    //                                TextField("", text: landmarkVisit.country)
-                    //                                    .disabled(/*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
-                    //                                    .font(Font.custom("Poppins", size: 14))
-                    //                                    .foregroundColor(Color(red: 0, green: 0.15, blue: 0.71))
-                    //
-                    //
-                    //                            }
-                    //                            .padding()
-                    //                            .background(Color(red: 0.94, green: 0.92, blue: 0.87))
-                    //                            .cornerRadius(8)
-                    //                            .shadow(color: Color(red: 0.71, green: 0.74, blue: 0.79, opacity: 0.12), radius: 16, y: 6)
-                    //                        }
-                    //                    }
-                    //                }
-                    //                .padding()
-                    Spacer()
-                    ChildNavController(viewModel: viewModel)
-                }
+                GreetUser()
+                ProfileOptions()
+            HStack{
+                Text("Past Landmarks:")
+                    .font(Font.custom("Poppins", size: 16).weight(.semibold))
+                    .foregroundColor(Color(red: 0.96, green: 0.40, blue: 0.33))
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .frame(width: 393, height: 800)
-            .background(Color(red: 0.98, green: 0.97, blue: 0.93))
-            
+            .frame(width: 352, height: 39)
+                
+            List(userHistory.landmarkVisits.indices, id: \.self) { //id in
+                //Text("\(id)")
+                LandmarkListRow(visit: userHistory.landmarkVisits[$0])
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color(($0 % 2 == 0) ? .systemGray5 : .systemGray6))
+            }
+            .listStyle(.plain)
+
+            Spacer()
+            ChildNavController(viewModel: viewModel)
         }
         
         .onAppear {
             fetchLandmarkVisits()
         }
     }
+    
+    @ViewBuilder
+    private func GreetUser()-> some View {
+        HStack(spacing: 161) {
+            Text("Hello \(User.shared.username ?? "User")")
+                .font(Font.custom("Poppins", size: 26).weight(.semibold))
+                .foregroundColor(Color(red: 0, green: 0.15, blue: 0.71))
+                .frame(maxWidth: .infinity, alignment: .leading) //
+        }
+        .frame(width: 352, height: 39)
+    }
+    
+    @ViewBuilder
+    private func ProfileOptions()-> some View {
+        VStack(alignment: .trailing, spacing: 0) {
+            HStack(spacing: 12) {
+                Text("Settings")
+                    .font(Font.custom("Poppins", size: 16).weight(.medium))
+                    .foregroundColor(Color(red: 0.96, green: 0.40, blue: 0.33))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .padding(EdgeInsets(top: 16, leading: 0, bottom: 16, trailing: 16))
+            .frame(width: 343)
+            .background(Color(red: 0.94, green: 0.92, blue: 0.87))
+            .cornerRadius(10)
+            
+            HStack(spacing: 12) {
+                Text("Preferences")
+                    .font(Font.custom("Poppins", size: 16).weight(.medium))
+                    .foregroundColor(Color(red: 0.96, green: 0.40, blue: 0.33))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .padding(EdgeInsets(top: 16, leading: 0, bottom: 16, trailing: 16))
+            .frame(width: 343)
+            .background(Color(red: 0.94, green: 0.92, blue: 0.87))
+            
+            HStack(spacing: 12) {
+                Text("FAQs")
+                    .font(Font.custom("Poppins", size: 16).weight(.medium))
+                    .foregroundColor(Color(red: 0.96, green: 0.40, blue: 0.33))
+                    .frame(maxWidth: .infinity, alignment: .leading) //
+            }
+            .padding(EdgeInsets(top: 16, leading: 0, bottom: 16, trailing: 16))
+            .frame(width: 343)
+            .background(Color(red: 0.94, green: 0.92, blue: 0.87))
+            .cornerRadius(10)
+        }
+        .frame(width: 356, height: 170)
+        .background(Color(red: 0.94, green: 0.92, blue: 0.87))
+        .cornerRadius(10)
+    }
+    
     
     private func fetchLandmarkVisits() {
         Task {

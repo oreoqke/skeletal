@@ -32,7 +32,7 @@ class UserHistoryStore {
     
     func getHistory() {
         // Method implementation
-        guard let apiUrl = URL(string: "\(serverUrl)get-user-landmark") else {
+        guard let apiUrl = URL(string: "\(serverUrl)get-user-landmark/") else {
             print("addUser: Bad URL")
             return
         }
