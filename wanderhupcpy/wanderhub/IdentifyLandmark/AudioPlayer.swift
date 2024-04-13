@@ -27,7 +27,7 @@ let APIKey = speechCred
 @Observable
 final class AudioPlayer: NSObject, AVAudioPlayerDelegate {
     var audio: Data! = nil
-    
+    var waiting_for_response = true
     
     @ObservationIgnored let playerUIState = PlayerUIState()
     @ObservationIgnored var playerState = PlayerState.start(.standby){
@@ -75,7 +75,8 @@ final class AudioPlayer: NSObject, AVAudioPlayerDelegate {
                 self.completionHandler = completion
                 self.audio = audioData
                 self.preparePlayer()
-                self.playTapped()
+                //self.playTapped()
+                self.waiting_for_response = false
             }
         }
     }
