@@ -14,11 +14,9 @@ struct LandmarkView: View {
     @ObservedObject var viewModel: NavigationControllerViewModel
     @StateObject var itineraryEntries = LandmarkStore.shared
     
-    @Environment(\.presentationMode) var presentationMode
-    
+    @Environment(\.presentationMode) var presentationMode    
     @Binding var landmark: Landmark
 
-    
     var body: some View {
         VStack{
             LandmarkInfo()

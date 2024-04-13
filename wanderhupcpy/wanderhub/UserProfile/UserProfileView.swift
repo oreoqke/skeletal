@@ -12,7 +12,7 @@ import SwiftUI
 struct UserProfileView: View {
     @ObservedObject var viewModel: NavigationControllerViewModel
     // @StateObject private var userHistoryStore = UserHistoryStore()
-    //   @State private var landmarkVisits: [LandmarkVisit] = []
+    // @State private var landmarkVisits: [LandmarkVisit] = []
     private let userHistory = UserHistoryStore.shared
     // @State private var landmarkVisits: [LandmarkVisit]
     
