@@ -24,9 +24,9 @@ struct wanderhubApp: App {
     
     var body: some Scene {
         WindowGroup {
-            //Onboard()
+            Onboard()
             //testView()
-            StartupPage()
+            //StartupPage()
             //HomeView()
             //UserProfileView()
         }

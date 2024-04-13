@@ -7,238 +7,329 @@
 
 import SwiftUI
 
+struct Preference {
+    let name: String
+    var isSelected: Bool
+}
+
+
 struct Onboard: View {
-    @State private var mountainButton = false // State variable to track button press
-    @State private var beachButton = false
-    @State private var jungleButton = false
-    @State private var ratingButton = false
-    @State private var campingButton = false
-    @State private var lakeButton = false
-    @State private var continueButton = false
+  // @State private var mountainButton = false // State variable to track button press
+//    @State private var beachButton = false
+//    @State private var jungleButton = false
+//    @State private var ratingButton = false
+//    @State private var campingButton = false
+//    @State private var lakeButton = false
+//    @State private var continueButton = false
     
     
-    @Binding var signinProcess: Bool
-    @Binding var showDismiss: Bool
+//    @Binding var signinProcess: Bool
+  //  @Binding var showDismiss: Bool
+    
+    
+    @State private var preferences: [Preference] = [
+          Preference(name: "Preference 1", isSelected: false),
+          Preference(name: "Preference 2", isSelected: false),
+          Preference(name: "Preference 3", isSelected: false)
+      ]
+
     
     var body: some View {
-        VStack(spacing: 41) {
+        //      Text("Hello \(User.shared.username ?? "User")")
+        
+        VStack {
             VStack(spacing: 10) {
-                Text("Hello \(User.shared.username ?? "User")")
+                Text("Hello User")
                     .font(Font.custom("Poppins", size: 26).weight(.semibold))
-                    .foregroundColor(Color(red: 25/255, green: 52/255, blue: 82/255))
+                    .foregroundColor(titleCol)
                 Text("What do you like to do?")
                     .font(Font.custom("Poppins", size: 25).weight(.medium))
-                    .foregroundColor(Color(red: 0.96, green: 0.40, blue: 0.33))
+                    .foregroundColor(orangeCol)
             }
             .frame(maxWidth: .infinity)
-            ZStack() {
-                
-                Button(action: {
-                    // Action to perform when button is pressed
-                    self.mountainButton.toggle()
-                }) {
-                    VStack(spacing: 10) {
-                        Image("Mountains")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 82, height: 82)
-                            .background(Color.white)
-                            .cornerRadius(8)
-                            .shadow(color: Color(red: 0.71, green: 0.74, blue: 0.79, opacity: 0.12), radius: 16, y: 6)
-                        
-                        Text("Mountain")
-                            .font(Font.custom("Cabin", size: 16).weight(.medium))
-                            .lineSpacing(25.60)
-                            .foregroundColor(self.mountainButton ? Color(red: 0, green: 0.15, blue: 0.71) : Color(red: 0.12, green: 0.16, blue: 0.22))
-                    }
-                }
-                .padding(10)
-                .frame(width: 102, height: 138)
-                .offset(x: -80, y: -146.50)
-                Button(action: {
-                    // Action to perform when button is pressed
-                    self.beachButton.toggle()
-                }) {
-                    
-                    VStack(spacing: 10) {
-                        HStack(spacing: 0) {
-                            Rectangle()
-                                .foregroundColor(.clear)
-                                .frame(width: 82, height: 82)
-                                .background(
-                                    Image("Shore")
-                                        .resizable()
-                                        .scaledToFit()                                    )
-                        }
-                        .frame(width: 82, height: 82)
-                        .background(Color(red: 1, green: 1, blue: 1))
-                        .cornerRadius(8)
-                        .shadow(
-                            color: Color(red: 0.71, green: 0.74, blue: 0.79, opacity: 0.12), radius: 16, y: 6
-                        )
-                        Text("Beach")
-                            .font(Font.custom("Cabin", size: 16).weight(.medium))
-                            .lineSpacing(25.60)
-                            .foregroundColor(self.beachButton ? Color(red: 0, green: 0.15, blue: 0.71) : Color(red: 0.12, green: 0.16, blue: 0.22))
+            VStack {
+                List(preferences.indices, id: \.self) { index in
+                    Toggle(isOn: self.binding(for: index)) {
+                        Text(self.preferences[index].name)
                         
                     }
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(backCol)
+                    
                 }
-                .padding(10)
-                .frame(width: 102, height: 138)
-                .offset(x: 80, y: -146.50)
+                .scrollContentBackground(.hidden)
                 
-                Button(action: {
-                    // Action to perform when button is pressed
-                    self.jungleButton.toggle()
-                }) {
-                    
-                    VStack(alignment: .leading, spacing: 10) {
-                        HStack(spacing: 0) {
-                            Rectangle()
-                                .foregroundColor(.clear)
-                                .frame(width: 82, height: 80)
-                                .background(
-                                    Image("Forest")
-                                        .resizable()
-                                        .scaledToFit()                                    )
-                        }
-                        .padding(EdgeInsets(top: 0, leading: 0, bottom: 2, trailing: 0))
-                        .frame(width: 82)
-                        .background(Color(red: 1, green: 1, blue: 1))
-                        .cornerRadius(8)
-                        .shadow(
-                            color: Color(red: 0.71, green: 0.74, blue: 0.79, opacity: 0.12), radius: 16, y: 6
-                        )
-                        Text("Jungle Safa")
-                            .font(Font.custom("Cabin", size: 16).weight(.medium))
-                            .lineSpacing(25.60)
-                            .foregroundColor(self.jungleButton ? Color(red: 0, green: 0.15, blue: 0.71) : Color(red: 0.12, green: 0.16, blue: 0.22))
-                    }
-                }
-                .padding(10)
-                .frame(width: 102, height: 138)
-                .offset(x: -80, y: 0.50)
-                
-                Button(action: {
-                    // Action to perform when button is pressed
-                    self.ratingButton.toggle()
-                }) {
-                    
-                    VStack(spacing: 10) {
-                        HStack(spacing: 0) {
-                            Rectangle()
-                                .foregroundColor(.clear)
-                                .frame(width: 82.06, height: 82)
-                                .background(
-                                    Image("Boats")
-                                        .resizable()
-                                        .scaledToFit()                                    )
-                        }
-                        .frame(width: 82, height: 82)
-                        .background(Color(red: 1, green: 1, blue: 1))
-                        .cornerRadius(8)
-                        .shadow(
-                            color: Color(red: 0.71, green: 0.74, blue: 0.79, opacity: 0.12), radius: 16, y: 6
-                        )
-                        Text("Rafting")
-                            .font(Font.custom("Cabin", size: 16).weight(.medium))
-                            .lineSpacing(25.60)
-                            .foregroundColor(self.ratingButton ? Color(red: 0, green: 0.15, blue: 0.71) : Color(red: 0.12, green: 0.16, blue: 0.22))
-                    }
-                    
-                }                  .padding(10)
-                    .frame(width: 102, height: 138)
-                    .offset(x: 80, y: 0.50)
-                Button(action: {
-                    // Action to perform when button is pressed
-                    self.campingButton.toggle()
-                }) {
-                    
-                    
-                    VStack(spacing: 10) {
-                        HStack(spacing: 0) {
-                            Rectangle()
-                                .foregroundColor(.clear)
-                                .frame(width: 82, height: 82)
-                                .background(
-                                    Image("Camp")
-                                        .resizable()
-                                        .scaledToFit()                                    )
-                        }
-                        .frame(width: 82, height: 82)
-                        .background(Color(red: 1, green: 1, blue: 1))
-                        .cornerRadius(8)
-                        .shadow(
-                            color: Color(red: 0.71, green: 0.74, blue: 0.79, opacity: 0.12), radius: 16, y: 6
-                        )
-                        Text("Camping")
-                            .font(Font.custom("Cabin", size: 16).weight(.medium))
-                            .lineSpacing(25.60)
-                            .foregroundColor(self.campingButton ? Color(red: 0, green: 0.15, blue: 0.71) : Color(red: 0.12, green: 0.16, blue: 0.22))
-                    }
-                    
-                    
-                }                  .padding(10)
-                    .frame(width: 102, height: 138)
-                    .offset(x: -80, y: 146.50)
-                
-                Button(action: {
-                    // Action to perform when button is pressed
-                    self.lakeButton.toggle()
-                }) {
-                    
-                    
-                    VStack(spacing: 10) {
-                        HStack(spacing: 0) {
-                            Rectangle()
-                                .foregroundColor(.clear)
-                                .frame(width: 82, height: 82)
-                                .background(
-                                    Image("Greenland")
-                                        .resizable()
-                                        .scaledToFit()                                    )
-                                .rotationEffect(.degrees(-180))
-                        }
-                        .frame(width: 82, height: 82)
-                        .background(Color(red: 1, green: 1, blue: 1))
-                        .cornerRadius(8)
-                        .shadow(
-                            color: Color(red: 0.71, green: 0.74, blue: 0.79, opacity: 0.12), radius: 16, y: 6
-                        )
-                        Text("Lake")
-                            .font(Font.custom("Cabin", size: 16).weight(.medium))
-                            .lineSpacing(25.60)
-                            .foregroundColor(self.lakeButton ? Color(red: 0, green: 0.15, blue: 0.71) : Color(red: 0.12, green: 0.16, blue: 0.22))
-                    }
-                    
-                    
-                }                  .padding(10)
-                    .frame(width: 102, height: 138)
-                    .offset(x: 80, y: 146.50)
             }
-            .frame(width: 262, height: 431)
+            
+            
             
             Button(action: {
-                // Action to perform when button is pressed
-                //self.continueButton.toggle()
-                showDismiss.toggle()
-                signinProcess.toggle()
-                
-            }) {
-                VStack(spacing: 10) {
-                    Image("arrow_right")
-                        .resizable()
-                        .frame(width: 40, height: 40)
-                        .frame(maxWidth: .infinity, alignment: .trailing)
-                }
-                
-                
-            }     
-            .frame(maxWidth: .infinity)
+                           // Action to perform when button is pressed
+                           //self.continueButton.toggle()
+                    sendPreferencesToBackend()
+                      //     showDismiss.toggle()
+                        //   signinProcess.toggle()
+           
+                       }) {
+                           VStack(spacing: 10) {
+                               Image("arrow_right")
+                                   .resizable()
+                                   .frame(width: 40, height: 40)
+                                   .frame(maxWidth: .infinity, alignment: .trailing)
+                           }
+           
+           
+                       }
+                       .frame(maxWidth: .infinity)
         }
-        .padding(EdgeInsets(top: 147, leading: 49, bottom: 146, trailing: 50))
-        .frame(width: 393, height: 852)
-        .background(Color(red: 0.98, green: 0.97, blue: 0.93))
+        .padding(EdgeInsets(top: 80, leading: 40, bottom: 80, trailing: 40))
+        .background(backCol)
         
+    }
+    
+    private func binding(for index: Int) -> Binding<Bool> {
+           Binding(
+               get: { self.preferences[index].isSelected },
+               set: { newValue in
+                   self.preferences[index].isSelected = newValue
+               }
+           )
+       }
+    
+    private func sendPreferencesToBackend() {
+        // Code to send selected preferences to backend via API call
+        let selectedPreferences = preferences.filter { $0.isSelected }.map { $0.name }
+        print("Selected preferences: \(selectedPreferences)")
+    }
+    //        VStack(spacing: 41) {
+//            VStack(spacing: 10) {
+//              //  Text("Hello \(User.shared.username ?? "User")")
+//                Text("Hello  User")
+//                    .font(Font.custom("Poppins", size: 26).weight(.semibold))
+//                    .foregroundColor(Color(red: 25/255, green: 52/255, blue: 82/255))
+//                Text("What do you like to do?")
+//                    .font(Font.custom("Poppins", size: 25).weight(.medium))
+//                    .foregroundColor(Color(red: 0.96, green: 0.40, blue: 0.33))
+//            }
+//            .frame(maxWidth: .infinity)
+//            ZStack() {
+//                
+//                Button(action: {
+//                    // Action to perform when button is pressed
+//                    self.mountainButton.toggle()
+//                }) {
+//                    VStack(spacing: 10) {
+//                        Image("Mountains")
+//                            .resizable()
+//                            .scaledToFit()
+//                            .frame(width: 82, height: 82)
+//                            .background(Color.white)
+//                            .cornerRadius(8)
+//                            .shadow(color: Color(red: 0.71, green: 0.74, blue: 0.79, opacity: 0.12), radius: 16, y: 6)
+//                        
+//                        Text("Mountain")
+//                            .font(Font.custom("Cabin", size: 16).weight(.medium))
+//                            .lineSpacing(25.60)
+//                            .foregroundColor(self.mountainButton ? Color(red: 0, green: 0.15, blue: 0.71) : Color(red: 0.12, green: 0.16, blue: 0.22))
+//                    }
+//                }
+//                .padding(10)
+//                .frame(width: 102, height: 138)
+//                .offset(x: -80, y: -146.50)
+//                Button(action: {
+//                    // Action to perform when button is pressed
+//                    self.beachButton.toggle()
+//                }) {
+//                    
+//                    VStack(spacing: 10) {
+//                        HStack(spacing: 0) {
+//                            Rectangle()
+//                                .foregroundColor(.clear)
+//                                .frame(width: 82, height: 82)
+//                                .background(
+//                                    Image("Shore")
+//                                        .resizable()
+//                                        .scaledToFit()                                    )
+//                        }
+//                        .frame(width: 82, height: 82)
+//                        .background(Color(red: 1, green: 1, blue: 1))
+//                        .cornerRadius(8)
+//                        .shadow(
+//                            color: Color(red: 0.71, green: 0.74, blue: 0.79, opacity: 0.12), radius: 16, y: 6
+//                        )
+//                        Text("Beach")
+//                            .font(Font.custom("Cabin", size: 16).weight(.medium))
+//                            .lineSpacing(25.60)
+//                            .foregroundColor(self.beachButton ? Color(red: 0, green: 0.15, blue: 0.71) : Color(red: 0.12, green: 0.16, blue: 0.22))
+//                        
+//                    }
+//                }
+//                .padding(10)
+//                .frame(width: 102, height: 138)
+//                .offset(x: 80, y: -146.50)
+//                
+//                Button(action: {
+//                    // Action to perform when button is pressed
+//                    self.jungleButton.toggle()
+//                }) {
+//                    
+//                    VStack(alignment: .leading, spacing: 10) {
+//                        HStack(spacing: 0) {
+//                            Rectangle()
+//                                .foregroundColor(.clear)
+//                                .frame(width: 82, height: 80)
+//                                .background(
+//                                    Image("Forest")
+//                                        .resizable()
+//                                        .scaledToFit()                                    )
+//                        }
+//                        .padding(EdgeInsets(top: 0, leading: 0, bottom: 2, trailing: 0))
+//                        .frame(width: 82)
+//                        .background(Color(red: 1, green: 1, blue: 1))
+//                        .cornerRadius(8)
+//                        .shadow(
+//                            color: Color(red: 0.71, green: 0.74, blue: 0.79, opacity: 0.12), radius: 16, y: 6
+//                        )
+//                        Text("Jungle Safa")
+//                            .font(Font.custom("Cabin", size: 16).weight(.medium))
+//                            .lineSpacing(25.60)
+//                            .foregroundColor(self.jungleButton ? Color(red: 0, green: 0.15, blue: 0.71) : Color(red: 0.12, green: 0.16, blue: 0.22))
+//                    }
+//                }
+//                .padding(10)
+//                .frame(width: 102, height: 138)
+//                .offset(x: -80, y: 0.50)
+//                
+//                Button(action: {
+//                    // Action to perform when button is pressed
+//                    self.ratingButton.toggle()
+//                }) {
+//                    
+//                    VStack(spacing: 10) {
+//                        HStack(spacing: 0) {
+//                            Rectangle()
+//                                .foregroundColor(.clear)
+//                                .frame(width: 82.06, height: 82)
+//                                .background(
+//                                    Image("Boats")
+//                                        .resizable()
+//                                        .scaledToFit()                                    )
+//                        }
+//                        .frame(width: 82, height: 82)
+//                        .background(Color(red: 1, green: 1, blue: 1))
+//                        .cornerRadius(8)
+//                        .shadow(
+//                            color: Color(red: 0.71, green: 0.74, blue: 0.79, opacity: 0.12), radius: 16, y: 6
+//                        )
+//                        Text("Rafting")
+//                            .font(Font.custom("Cabin", size: 16).weight(.medium))
+//                            .lineSpacing(25.60)
+//                            .foregroundColor(self.ratingButton ? Color(red: 0, green: 0.15, blue: 0.71) : Color(red: 0.12, green: 0.16, blue: 0.22))
+//                    }
+//                    
+//                }                  .padding(10)
+//                    .frame(width: 102, height: 138)
+//                    .offset(x: 80, y: 0.50)
+//                Button(action: {
+//                    // Action to perform when button is pressed
+//                    self.campingButton.toggle()
+//                }) {
+//                    
+//                    
+//                    VStack(spacing: 10) {
+//                        HStack(spacing: 0) {
+//                            Rectangle()
+//                                .foregroundColor(.clear)
+//                                .frame(width: 82, height: 82)
+//                                .background(
+//                                    Image("Camp")
+//                                        .resizable()
+//                                        .scaledToFit()                                    )
+//                        }
+//                        .frame(width: 82, height: 82)
+//                        .background(Color(red: 1, green: 1, blue: 1))
+//                        .cornerRadius(8)
+//                        .shadow(
+//                            color: Color(red: 0.71, green: 0.74, blue: 0.79, opacity: 0.12), radius: 16, y: 6
+//                        )
+//                        Text("Camping")
+//                            .font(Font.custom("Cabin", size: 16).weight(.medium))
+//                            .lineSpacing(25.60)
+//                            .foregroundColor(self.campingButton ? Color(red: 0, green: 0.15, blue: 0.71) : Color(red: 0.12, green: 0.16, blue: 0.22))
+//                    }
+//                    
+//                    
+//                }                  .padding(10)
+//                    .frame(width: 102, height: 138)
+//                    .offset(x: -80, y: 146.50)
+//                
+//                Button(action: {
+//                    // Action to perform when button is pressed
+//                    self.lakeButton.toggle()
+//                }) {
+//                    
+//                    
+//                    VStack(spacing: 10) {
+//                        HStack(spacing: 0) {
+//                            Rectangle()
+//                                .foregroundColor(.clear)
+//                                .frame(width: 82, height: 82)
+//                                .background(
+//                                    Image("Greenland")
+//                                        .resizable()
+//                                        .scaledToFit()                                    )
+//                                .rotationEffect(.degrees(-180))
+//                        }
+//                        .frame(width: 82, height: 82)
+//                        .background(Color(red: 1, green: 1, blue: 1))
+//                        .cornerRadius(8)
+//                        .shadow(
+//                            color: Color(red: 0.71, green: 0.74, blue: 0.79, opacity: 0.12), radius: 16, y: 6
+//                        )
+//                        Text("Lake")
+//                            .font(Font.custom("Cabin", size: 16).weight(.medium))
+//                            .lineSpacing(25.60)
+//                            .foregroundColor(self.lakeButton ? Color(red: 0, green: 0.15, blue: 0.71) : Color(red: 0.12, green: 0.16, blue: 0.22))
+//                    }
+//                    
+//                    
+//                }                  .padding(10)
+//                    .frame(width: 102, height: 138)
+//                    .offset(x: 80, y: 146.50)
+//            }
+//            .frame(width: 262, height: 431)
+//            
+//            Button(action: {
+//                // Action to perform when button is pressed
+//                //self.continueButton.toggle()
+//           //     showDismiss.toggle()
+//             //   signinProcess.toggle()
+//                
+//            }) {
+//                VStack(spacing: 10) {
+//                    Image("arrow_right")
+//                        .resizable()
+//                        .frame(width: 40, height: 40)
+//                        .frame(maxWidth: .infinity, alignment: .trailing)
+//                }
+//                
+//                
+//            }     
+//            .frame(maxWidth: .infinity)
+//        }
+//        .padding(EdgeInsets(top: 147, leading: 49, bottom: 146, trailing: 50))
+//        .frame(width: 393, height: 852)
+//        .background(Color(red: 0.98, green: 0.97, blue: 0.93))
+        
+    
+}
+
+//#Preview {
+//    Onboard()
+//}
+
+struct Onboard_Previews: PreviewProvider {
+    static var previews: some View {
+        Onboard()
     }
 }

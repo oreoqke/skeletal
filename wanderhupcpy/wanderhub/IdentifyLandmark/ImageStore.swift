@@ -19,7 +19,7 @@ final class ImageStore {
     private init() {}                // and make the constructor private so no other
     // instances can be created
     private(set) var chatts = [ImageData]()
-    private let nFields = Mirror(reflecting: ImageData()).children.count
+  //  private let nFields = Mirror(reflecting: ImageData()).children.count
     
     // TODO: ADD AUTHORIZATION. USE WanderHubID.shared.id TO SEND REQUEST TO BACKEND
     func postImage(_ imagedata: ImageData, image: UIImage?) async -> Data? {
@@ -39,7 +39,7 @@ final class ImageStore {
             "Authorization": "Token \(token)",
             "Accept": "application/json; charset=utf-8",
             "Content-Type": "application/json; charset=utf-8" ]
-        //print(headers)
+
         return try? await AF.upload(multipartFormData: { mpFD in
             if let usernameData = imagedata.username?.data(using: .utf8) {
                 mpFD.append(usernameData, withName: "username")

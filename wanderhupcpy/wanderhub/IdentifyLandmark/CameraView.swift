@@ -118,10 +118,10 @@ struct CameraView: View {
         Task {
             let newChatt = ImageData(username: username, timestamp: Date().description, imageUrl: nil, geoData: geoData)
             if let returnedLandmark = await ImageStore.shared.postImage(newChatt, image: image) {
-                let landmarkName = returnedLandmark.name
-                let landmarkInfo = returnedLandmark.info
-                self.landmarkName = landmarkName
-                self.landmarkInfo = landmarkInfo
+               // let landmarkName = returnedLandmark.name
+                let landmarkInfo = returnedLandmark
+               // self.landmarkName = landmarkName
+               // self.landmarkInfo = landmarkInfo
             }
         }
         
