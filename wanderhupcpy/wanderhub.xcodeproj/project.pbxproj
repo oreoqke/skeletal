@@ -46,6 +46,7 @@
 		4ED93CA82BB0B3040053D2EC /* MapStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED93CA72BB0B3040053D2EC /* MapStore.swift */; };
 		4ED93CAB2BB0B3710053D2EC /* homepageSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED93CAA2BB0B3710053D2EC /* homepageSearch.swift */; };
 		4ED93CAD2BB0B38F0053D2EC /* searchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED93CAC2BB0B38F0053D2EC /* searchBarView.swift */; };
+		BC2CE6FA2BD1778B0048F5E0 /* Trip.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2CE6F92BD1778B0048F5E0 /* Trip.swift */; };
 		F76ECAFE2BB1D1B3005FFB63 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = F76ECAFD2BB1D1B3005FFB63 /* Alamofire */; };
 /* End PBXBuildFile section */
 
@@ -89,6 +90,7 @@
 		4ED93CA72BB0B3040053D2EC /* MapStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapStore.swift; sourceTree = "<group>"; };
 		4ED93CAA2BB0B3710053D2EC /* homepageSearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = homepageSearch.swift; sourceTree = "<group>"; };
 		4ED93CAC2BB0B38F0053D2EC /* searchBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = searchBarView.swift; sourceTree = "<group>"; };
+		BC2CE6F92BD1778B0048F5E0 /* Trip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trip.swift; sourceTree = "<group>"; };
 		F7EAB9132BA0B7F800F2B335 /* wanderhub.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = wanderhub.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -114,6 +116,7 @@
 				0412BAE42BAFF3BF00991ED3 /* Landmark.swift */,
 				041D3F312BC9C2DB0031C21F /* LandmarkView.swift */,
 				0412BAE52BAFF3BF00991ED3 /* LandmarkStore.swift */,
+				BC2CE6F92BD1778B0048F5E0 /* Trip.swift */,
 			);
 			path = CommonObj;
 			sourceTree = "<group>";
@@ -324,6 +327,7 @@
 				0412BB0E2BAFF3C000991ED3 /* MainTripView.swift in Sources */,
 				0412BB1B2BAFF3C000991ED3 /* HomeView.swift in Sources */,
 				0412BB0C2BAFF3C000991ED3 /* BookingView.swift in Sources */,
+				BC2CE6FA2BD1778B0048F5E0 /* Trip.swift in Sources */,
 				0412BB092BAFF3C000991ED3 /* CameraView.swift in Sources */,
 				0412BB1D2BAFF3C000991ED3 /* StartupPage.swift in Sources */,
 				0412BB082BAFF3C000991ED3 /* LandmarkStore.swift in Sources */,

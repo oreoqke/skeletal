@@ -299,7 +299,6 @@ struct ItinerarySingleEntryExpandedView: View {
 struct DayView: View {
     @Binding var day: Int
     
-    
     @ObservedObject var viewModel: NavigationControllerViewModel
     // moving a landmark around
     @State var draggedLandmark: Landmark?
@@ -377,9 +376,6 @@ struct DayView: View {
     
 }
 
-
-
-
 struct ItineraryView: View {
     
     @State var days = [1,2,3,4,5,6,7, 9, 10, 11, 12]
@@ -396,7 +392,6 @@ struct ItineraryView: View {
     @StateObject var itineraryEntries = LandmarkStore.shared
     
     @State var newDescription: String = ""
-    
     
     var body: some View {
         
