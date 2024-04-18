@@ -121,11 +121,13 @@ struct CameraView: View {
             let newChatt = ImageData(username: username, timestamp: Date().description, imageUrl: nil, geoData: geoData)
             if let returnedLandmark = await ImageStore.shared.postImage(newChatt, image: image) {
                 //let landmarkName = returnedLandmark.name
-                //let landmarkInfo = returnedLandmark.info
-                let landmarkName = String(data: returnedLandmark, encoding: .utf8)
-                let landmarkInfo = String(data: returnedLandmark, encoding: .utf8)
-                self.landmarkName = landmarkName
-                self.landmarkInfo = landmarkInfo
+                if let decodedResponse = try JSONSerialization.jsonObject(with: returnedLandmark, options: []) as? [String: String] {
+                    self.landmarkName = decodedResponse["landmarks_info"]
+                       }
+                //let landmarkName = String(data: returnedLandmark, encoding: .utf8)
+             //   let landmarkInfo = String(data: returnedLandmark, encoding: .utf8)
+               //self.landmarkName = landmarkName
+                //self.landmarkInfo = landmarkInfo
             }
         }
         

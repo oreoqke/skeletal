@@ -13,8 +13,8 @@ struct Preference {
 }
 
 struct Onboard: View {
- //   @Binding var signinProcess: Bool
-   // @Binding var showDismiss: Bool
+    @Binding var signinProcess: Bool
+    @Binding var showDismiss: Bool
 //    private let selectedRowColor = Color.blue.opacity(0.3) // You can adjust the opacity and color as needed
 
     @State private var preferences: [Preference] = [
@@ -37,10 +37,10 @@ struct Onboard: View {
         VStack {
             VStack(spacing: 10) {
                 Text("Hello \(User.shared.username ?? "User")")
-                    .font(Font.custom("Poppins", size: 20).weight(.semibold))
+                    .font(Font.custom("Poppins", size: 20))
                     .foregroundColor(titleCol)
                 Text("What do you like to do?")
-                    .font(Font.custom("Poppins", size: 19).weight(.medium))
+                    .font(Font.custom("Poppins", size: 19))
                     .foregroundColor(orangeCol)
             }
             
@@ -62,8 +62,8 @@ struct Onboard: View {
             
             Button(action: {
                 sendPreferencesToBackend()
-    //            showDismiss.toggle()
-  //              signinProcess.toggle()
+                showDismiss.toggle()
+                signinProcess.toggle()
                 
             }) {
                 VStack(spacing: 10) {
@@ -110,8 +110,8 @@ struct Onboard: View {
     
 }
 
-struct Onboard_Previews: PreviewProvider {
-    static var previews: some View {
-        Onboard()
-    }
-}
+//struct Onboard_Previews: PreviewProvider {
+//    static var previews: some View {
+//        Onboard()
+//    }
+//}

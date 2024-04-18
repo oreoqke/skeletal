@@ -18,6 +18,7 @@ struct wanderhubApp: App {
 //        }
         Task {
             await LandmarkStore.shared.getLandmarks(day: 1)
+            await UserHistoryStore.shared.getHistory()
         }
     }
     

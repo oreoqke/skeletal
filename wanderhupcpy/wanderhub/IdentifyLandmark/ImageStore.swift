@@ -17,13 +17,11 @@ final class ImageStore {
     private let user = User.shared
     static let shared = ImageStore() // create one instance of the class to be shared
     private init() {}                // and make the constructor private so no other
-    // instances can be created
-    private(set) var chatts = [ImageData]()
-  //  private let nFields = Mirror(reflecting: ImageData()).children.count
+   // private(set) var chatts = [ImageData]()
     
     // TODO: ADD AUTHORIZATION. USE WanderHubID.shared.id TO SEND REQUEST TO BACKEND
     func postImage(_ imagedata: ImageData, image: UIImage?) async -> Data? {
-        guard let apiUrl = URL(string: "\(serverUrl)post_landmarks/") else {
+        guard let apiUrl = URL(string: "\(serverUrl)post_landmark_id_and_info/") else {
             print("postChatt: Bad URL")
             return nil
         }
@@ -31,10 +29,6 @@ final class ImageStore {
         guard let token = UserDefaults.standard.string(forKey: "usertoken") else {
             return nil
         }
-        //        let plainString = token as NSString
-        //        let plainData = plainString.data(using:NSUTF8StringEncoding)
-        //        let base64String = plainData?.base64EncodedData(options: NSData.Base64EncodingOptions.init(rawValue: 0))
-        
         //        let plainString = token as NSString
         //        let plainData = plainString.data(using:NSUTF8StringEncoding)
         //        let base64String = plainData?.base64EncodedData(options: NSData.Base64EncodingOptions.init(rawValue: 0))
