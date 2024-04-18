@@ -71,25 +71,7 @@ struct ItineraryHeaderView: View {
     @State var tripStartDate: Date = getDateObject("11/11/2023", "00:00")
     @State var tripEndDate:   Date = getDateObject("11/15/2023", "00:00")
     
-    // surprisingly complex, not inlining in View
-    func getTripDateRange() -> String {
-        
-        let dateFormatter = DateFormatter()
-        
-        // get months
-        dateFormatter.dateFormat = "LLLL"
-        let startMonthString = dateFormatter.string(from: tripStartDate)
-        let endMonthString   = dateFormatter.string(from: tripEndDate)
-        
-        dateFormatter.dateFormat = "dd"
-        let startDayString = dateFormatter.string(from: tripStartDate)
-        let endDayString = dateFormatter.string(from: tripEndDate)
-        
-        return startMonthString == endMonthString ?
-        "\(startMonthString) \(startDayString) - \(endDayString)" :
-        "\(startMonthString) \(startDayString) - \(endMonthString) \(endDayString)"
-        
-    }
+
     
     var body: some View {
         
@@ -118,7 +100,7 @@ struct ItineraryHeaderView: View {
                     .foregroundColor(Color.blue)
                 
                 // Trip Datess
-                Text(self.getTripDateRange())
+                Text(getTripDateRange(tripStartDate: self.tripStartDate, tripEndDate: self.tripEndDate))
                     .font(Font.body)
                     .foregroundColor(Color.gray)
             }
