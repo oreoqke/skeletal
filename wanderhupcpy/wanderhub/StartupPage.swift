@@ -17,36 +17,11 @@ struct StartupPage: View {
     var body: some View {
         NavigationView{
             VStack {
-//                //Talk()
-//                var inputMessage = "The Eiffel Tower is a big metal tower in Paris, France."
-//                Spacer()
-//                Button{
-//                    SpeechService.shared.speak(text: inputMessage) {
-//                        print("done")
-//                    }
-//                }label: {
-//                    Text("click me")
-//                }
-//                Spacer()
-//                Button {
-//                    SpeechService.shared.stopSpeaking()
-//                } label: {
-//                    Image(systemName: "stop.fill")
-//                        .scaleEffect(3)
-//                }
-//                Spacer()
-//                Button {
-//                    SpeechService.shared.rewindPlayback(by: 10000)
-//                } label: {
-//                    Image(systemName: "backward.fill")
-//                        .scaleEffect(3)
-//                }
-//                Spacer()
-                
                 if isActive {
                     if SigninPresented {
                         SigninView(isPresented: $SigninPresented)
                     } else {
+                        //UpcomingTripsView()
                         HomeView()
                     }
                 } else {
