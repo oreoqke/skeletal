@@ -211,12 +211,16 @@ struct PlayButton: View {
     @Environment(AudioPlayer.self) private var audioPlayer
     
     var body: some View {
-        Button {
-            audioPlayer.playTapped()
-        } label: {
-            audioPlayer.playerUIState.playIcon
-                .scaleEffect(2.0)
-                .padding(.trailing, 20)
+        if audioPlayer.waiting_for_response {
+            ProgressView()
+        } else {
+            Button {
+                audioPlayer.playTapped()
+            } label: {
+                audioPlayer.playerUIState.playIcon
+                    .scaleEffect(2.0)
+                    .padding(.trailing, 20)
+            }
         }
     }
 }

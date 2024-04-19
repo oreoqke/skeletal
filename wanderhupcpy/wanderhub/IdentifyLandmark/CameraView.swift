@@ -34,6 +34,15 @@ struct CameraView: View {
                 .foregroundColor(.black)
             }
             Spacer().frame(height:200)
+            VStack {
+                Text("Take a picture and upload")
+                Text("the landmark to learn more!")
+            }
+                .foregroundColor(Color(.systemBlue))
+                .fontWeight(.bold)
+                .font(.system(size: 18))
+                .padding()
+                .frame(maxWidth: .infinity, alignment: .center)
             VStack () {
                 GeometryReader { geometry in
                     if let image = image {
@@ -82,8 +91,6 @@ struct CameraView: View {
                         .cornerRadius(10)
                         .offset(x: 0, y: 0)
                     AlbumButton()
-                    
-                    
                 }
                 
             }
