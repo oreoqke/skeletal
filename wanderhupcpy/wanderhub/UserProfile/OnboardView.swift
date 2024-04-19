@@ -61,7 +61,9 @@ struct Onboard: View {
             }
             
             Button(action: {
-                sendPreferencesToBackend()
+                Task{
+                 await sendPreferencesToBackend()
+                }
                 showDismiss.toggle()
                 signinProcess.toggle()
                 
@@ -89,20 +91,52 @@ struct Onboard: View {
     }
     
     
-    private func sendPreferencesToBackend() {
+    private func sendPreferencesToBackend() async {
         // Code to send selected preferences to backend via API call
         let selectedPreferencesDict = preferences.reduce(into: [String: Int]()) { result, preference in
             result[preference.name] = preference.isSelected ? 1 : 0
         }
+//        do {
+//            let jsonData = try JSONSerialization.data(withJSONObject: selectedPreferencesDict, options: .prettyPrinted)
+//            if let jsonString = String(data: jsonData, encoding: .utf8) {
+//                print("Selected preferences JSON: \(jsonString)")
+//            } else {
+//                print("Error converting dictionary to JSON string")
+//            }
+//        } catch {
+//            print("Error converting dictionary to JSON: \(error)")
+//        }
+
+        guard let jsonData = try? JSONSerialization.data(withJSONObject: selectedPreferencesDict) else {
+            print("addUser: jsonData serialization error")
+            return
+        }
+        guard let apiUrl = URL(string: "\(serverUrl)initialize_user_preferences/") else { // TODO REPLACE URL
+            print("addUser: Bad URL")
+            return
+        }
+        guard let token = UserDefaults.standard.string(forKey: "usertoken") else {
+            return
+        }
+        
+        var request = URLRequest(url: apiUrl)
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        //request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Accept") // expect response in JSON
+        request.setValue("Token \(token)", forHTTPHeaderField: "Authorization")
+        request.httpMethod = "POST"
+        request.httpBody = jsonData
+        
         do {
-            let jsonData = try JSONSerialization.data(withJSONObject: selectedPreferencesDict, options: .prettyPrinted)
-            if let jsonString = String(data: jsonData, encoding: .utf8) {
-                print("Selected preferences JSON: \(jsonString)")
-            } else {
-                print("Error converting dictionary to JSON string")
+            let (data, response) = try await URLSession.shared.data(for: request)
+            
+            if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
+                print("login: HTTP STATUS: \(httpStatus.statusCode)")
+                return
             }
+
         } catch {
-            print("Error converting dictionary to JSON: \(error)")
+            print("Error: \(error.localizedDescription)")
+            return
         }
 
 
