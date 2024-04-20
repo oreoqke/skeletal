@@ -13,9 +13,8 @@ struct Preference {
 }
 
 struct Onboard: View {
-    @Binding var signinProcess: Bool
+   @Binding var signinProcess: Bool
     @Binding var showDismiss: Bool
-//    private let selectedRowColor = Color.blue.opacity(0.3) // You can adjust the opacity and color as needed
 
     @State private var preferences: [Preference] = [
         Preference(name: "Art", isSelected: false),
@@ -53,7 +52,6 @@ struct Onboard: View {
                     .toggleStyle(SwitchToggleStyle(tint: .blue))
                     .listRowSeparator(.hidden)
                     .listRowBackground(backCol)
-//                    .listRowBackground(self.preferences[index].isSelected ? selectedRowColor : Color.clear)
 
                 }
                 .scrollContentBackground(.hidden)
@@ -96,16 +94,8 @@ struct Onboard: View {
         let selectedPreferencesDict = preferences.reduce(into: [String: Int]()) { result, preference in
             result[preference.name] = preference.isSelected ? 1 : 0
         }
-//        do {
-//            let jsonData = try JSONSerialization.data(withJSONObject: selectedPreferencesDict, options: .prettyPrinted)
-//            if let jsonString = String(data: jsonData, encoding: .utf8) {
-//                print("Selected preferences JSON: \(jsonString)")
-//            } else {
-//                print("Error converting dictionary to JSON string")
-//            }
-//        } catch {
-//            print("Error converting dictionary to JSON: \(error)")
-//        }
+        print(selectedPreferencesDict)
+
 
         guard let jsonData = try? JSONSerialization.data(withJSONObject: selectedPreferencesDict) else {
             print("addUser: jsonData serialization error")
@@ -115,9 +105,11 @@ struct Onboard: View {
             print("addUser: Bad URL")
             return
         }
-        guard let token = UserDefaults.standard.string(forKey: "usertoken") else {
-            return
-        }
+//        guard let token = UserDefaults.standard.string(forKey: "usertoken") else {
+//            return
+//        }
+        let token = "434acab1351f3aff0fdea39b0db4a56c29224ac3"
+        //FIXME: CHANGE THIS, THIS IS ONLY FOR TESTING TOKEN IS FOR ONBOARD_PLEASE
         
         var request = URLRequest(url: apiUrl)
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -130,9 +122,13 @@ struct Onboard: View {
             let (data, response) = try await URLSession.shared.data(for: request)
             
             if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
-                print("login: HTTP STATUS: \(httpStatus.statusCode)")
+                print("onboard: HTTP STATUS: \(httpStatus.statusCode)")
+                print("Response:")
+                print(response)
                 return
             }
+            print("Response:")
+            print(response)
 
         } catch {
             print("Error: \(error.localizedDescription)")

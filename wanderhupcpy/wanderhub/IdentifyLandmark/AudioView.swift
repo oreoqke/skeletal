@@ -12,65 +12,75 @@ import Observation
 struct AudioView: View {
     @Binding var isPresented: Bool
     @Environment(AudioPlayer.self) private var audioPlayer
-    
-    let myscript = """
-    (Black screen with text; The sound of buzzing bees can be heard) According to all known laws
-    of aviation,
-     :
-    there is no way a bee
-    should be able to fly.
-     :
-    Its wings are too small to get
-    its fat little body off the ground.
-     :
-    The bee, of course, flies anyway
-     :
-    because bees don't care
-    what humans think is impossible.
-    BARRY BENSON:
-    (Barry is picking out a shirt)
-    Yellow, black. Yellow, black.
-    Yellow, black. Yellow, black.
-     :
-    Ooh, black and yellow!
-    Let's shake it up a little.
-    JANET BENSON:
-    Barry! Breakfast is ready!
-    BARRY:
-    Coming!
-     :
-    Hang on a second.
-    (Barry uses his antenna like a phone)
-     :
-    Hello?
-    ADAM FLAYMAN:
+    let textToSpeechScript: String // Added property
 
-    (Through phone)
-    - Barry?
-    BARRY:
-    - Adam?
-    ADAM:
-    - Can you believe this is happening?
-    BARRY:
-    - I can't. I'll pick you up.
-    (Barry flies down the stairs)
-    """
+//    let myscript = """
+//    (Black screen with text; The sound of buzzing bees can be heard) According to all known laws
+//    of aviation,
+//     :
+//    there is no way a bee
+//    should be able to fly.
+//     :
+//    Its wings are too small to get
+//    its fat little body off the ground.
+//     :
+//    The bee, of course, flies anyway
+//     :
+//    because bees don't care
+//    what humans think is impossible.
+//    BARRY BENSON:
+//    (Barry is picking out a shirt)
+//    Yellow, black. Yellow, black.
+//    Yellow, black. Yellow, black.
+//     :
+//    Ooh, black and yellow!
+//    Let's shake it up a little.
+//    JANET BENSON:
+//    Barry! Breakfast is ready!
+//    BARRY:
+//    Coming!
+//     :
+//    Hang on a second.
+//    (Barry uses his antenna like a phone)
+//     :
+//    Hello?
+//    ADAM FLAYMAN:
+//    
+//    (Through phone)
+//    - Barry?
+//    BARRY:
+//    - Adam?
+//    ADAM:
+//    - Can you believe this is happening?
+//    BARRY:
+//    - I can't. I'll pick you up.
+//    (Barry flies down the stairs)
+//    """
     
     var body: some View {
         VStack {
             // view to be defined
             Spacer()
             HStack {
-                Spacer()
-                StopButton()
-                Spacer()
-                RwndButton()
-                Spacer()
-                PlayButton()
-                Spacer()
-                FfwdButton()
-                Spacer()
-                DoneButton(isPresented: $isPresented)
+                if audioPlayer.waiting_for_response {
+                    VStack{
+                        Text("Text to Speech loading")
+                        ProgressView()
+                    }
+                }
+                else {
+                    Spacer()
+                    StopButton()
+                    Spacer()
+                    RwndButton()
+                    Spacer()
+                    PlayButton()
+                    Spacer()
+                    FfwdButton()
+                    Spacer()
+                }
+//                Spacer()
+//                DoneButton(isPresented: $isPresented)
             }
             Spacer()
         }
@@ -78,8 +88,8 @@ struct AudioView: View {
         
         
         .onAppear {
-            audioPlayer.txt2speech(text: myscript) {
-                    print("sone speaking")
+            audioPlayer.txt2speech(text: textToSpeechScript) {
+                print("sone speaking")
             }
         }
         .onDisappear {
@@ -93,21 +103,21 @@ struct AudioView: View {
 @Observable
 final class PlayerUIState {
     
-
+    
     var playCtlDisabled = true
     var playDisabled = true
     var playIcon = Image(systemName: "play")
-
+    
     var doneIcon = Image(systemName: "xmark.square") // initial value
- 
+    
     private func reset() {
-
-
+        
+        
         playCtlDisabled = true
         
         playIcon = Image(systemName: "play")
-
-
+        
+        
     }
     
     private func playCtlEnabled(_ enabled: Bool) {

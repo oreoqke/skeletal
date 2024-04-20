@@ -11,12 +11,8 @@ import SwiftUI
 
 struct UserProfileView: View {
     @ObservedObject var viewModel: NavigationControllerViewModel
-    // @StateObject private var userHistoryStore = UserHistoryStore()
-    // @State private var landmarkVisits: [LandmarkVisit] = []
     @ObservedObject var userHistorystore = UserHistoryStore.shared
     @State private var isDataLoaded = false
-    // @State private var landmarkVisits: [LandmarkVisit]
-    // @State private var landmarkVisits: [LandmarkVisit] = []
     let landmarkVisits = UserHistoryStore.shared.landmarkVisits
    
     var body: some View {
@@ -31,7 +27,7 @@ struct UserProfileView: View {
             }
             .frame(width: 352, height: 39)
             VStack {
-//                if isDataLoaded {
+                ScrollView {
                     List(userHistorystore.landmarkVisits.indices, id: \.self) { index in
                         LandmarkListRow(visit: userHistorystore.landmarkVisits[index])
                             .listRowSeparator(.hidden)
@@ -39,26 +35,17 @@ struct UserProfileView: View {
                     }
                     .listStyle(.plain)
                     .refreshable {
-                       printLandmarkVisits()
+                        printLandmarkVisits()
                     }
-//                } else {
-//                    ProgressView()
-//                }
+                }
+                .frame(maxHeight: .infinity)
             }
             
             Spacer()
             ChildNavController(viewModel: viewModel)
         }
         .background(backCol)
-//        .onChange(of: isDataLoaded) { isLoaded in
-//            if isLoaded {
-//                isDataLoaded = true
-//            }
-//        }
-//
-//        .onAppear {
-//            fetchLandmarkVisits()
-//        }
+
     }
     
     @ViewBuilder
@@ -112,15 +99,7 @@ struct UserProfileView: View {
         .cornerRadius(10)
     }
     
-    
-//    private func fetchLandmarkVisits() {
-//        Task {
-//            if userHistorystore.getHistory() {
-//                isDataLoaded = true
-//            }
-//            
-//        }
-//    }
+
     
     private func printLandmarkVisits() {
         print("tetsign from profile view",userHistorystore.landmarkVisits)
@@ -144,15 +123,21 @@ struct LandmarkListRow: View {
                                             }
                                             .scaledToFit()
                                             .frame(height: 181)
-                                        }//            Image(systemName: "airplane.departure")
-//                .resizable()
-//                .aspectRatio(contentMode: .fit)
-//                .frame(width: 60, height: 60)
+            } else {
+                Image(systemName: "airplane.departure")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 60, height: 60)
+            }
             
             VStack(alignment: .leading){
                 Text(visit.landmark_name).font(.headline)
                 Text("\(visit.city_name), \(visit.country_name)").font(.subheadline)
-                Text(visit.visit_time)
+                if visit.description != "Unknown" {
+                            Text("\(visit.description), \(visit.tags.joined(separator: ", "))")
+                }              
+                Text("\(visit.rating)/5, \(visit.visit_time)")
+                
             }
             Spacer()
         }

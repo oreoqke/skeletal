@@ -109,13 +109,11 @@ final class LandmarkStore: ObservableObject {
     func submitRating(rating: Int, id: String) async {
         var landmark2Rate = landmarks.first { $0.id == id }
         landmark2Rate?.rating = rating
-        
         //make a post request to rate the landmark
-        
     }
     
 
-    
+
     // TODO: ADD AUTHORIZATION. USE WanderHubID.shared.id TO SEND REQUEST TO BACKEND
     func getLandmarks(day: Int?) async {
         // FIX THIS

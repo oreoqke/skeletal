@@ -34,6 +34,13 @@ struct HomeView: View {
     @StateObject var viewmodel = NavigationControllerViewModel()
     @ObservedObject var destinations = Destinations()
     
+    init () {
+        Task {
+            await LandmarkStore.shared.getLandmarks(day: 1)
+            await UserHistoryStore.shared.getHistory()
+        }
+    }
+    
     var body: some View {
             VStack() {
                 // This uses hardcoded spacing value from the top

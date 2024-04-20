@@ -11,7 +11,6 @@ struct CameraView: View {
     @ObservedObject var viewModel: NavigationControllerViewModel
     
     private let username = UserDefaults.standard.string(forKey: "username")
-    //@State private var message = "Some short sample text."
     @State private var image: UIImage? = nil
     @State private var videoUrl: URL? = nil
     @State private var isPresenting = false
@@ -19,6 +18,8 @@ struct CameraView: View {
     @State private var landmark_name: String? = nil
     @State private var landmarkName: String? = nil
     @State private var landmarkInfo: String? = nil
+    @State private var isLoading = false
+    @State private var showTapMeButton = false
     @State var showInfoPopup = false
     
     
@@ -62,12 +63,20 @@ struct CameraView: View {
                     
                 }
                 .buttonStyle(.borderedProminent)
+                .foregroundColor(backCol)
+                .opacity(showTapMeButton ? 1.0 : 0.0) // Hide if false
                 .sheet(isPresented: $showInfoPopup, content: {
-                    BottomSheetInfoView(landmarkName: landmarkName,
-                                        landmarkInfo: landmarkInfo,
+                    BottomSheetInfoView(landmarkName: self.landmarkName,
+                                        landmarkInfo: self.landmarkInfo,
                                         showInfoPopup: $showInfoPopup)
                         .presentationDetents([.medium, .large])
                 })
+                
+                if isLoading {
+                               ProgressView()
+                                   .padding()
+                           }
+                           
                 
                 
             }
@@ -122,63 +131,67 @@ struct CameraView: View {
     }
     
     func submitAction() {
-        
-        let geoData = GeoData(lat: 0.0, lon: 0.0, place: "Unknown1", facing: "Unknown1", speed: "Unknown1")
+        isLoading = true
+        //let geoData = GeoData(lat: 0.0, lon: 0.0, place: "Unknown1", facing: "Unknown1", speed: "Unknown1")
+        let geoData = GeoData(lat: LocManager.shared.location.coordinate.latitude, lon: LocManager.shared.location.coordinate.longitude, facing: LocManager.shared.compassHeading, speed: LocManager.shared.speed)
+
         Task {
             let newChatt = ImageData(username: username, timestamp: Date().description, imageUrl: nil, geoData: geoData)
             if let returnedLandmark = await ImageStore.shared.postImage(newChatt, image: image) {
-                //let landmarkName = returnedLandmark.name
                 if let decodedResponse = try JSONSerialization.jsonObject(with: returnedLandmark, options: []) as? [String: String] {
-                    self.landmarkName = decodedResponse["landmarks_info"]
+                    print(decodedResponse)
+                    DispatchQueue.main.async {
+                                        self.landmarkName = decodedResponse["landmark_name"]
+                                        self.landmarkInfo = decodedResponse["landmark_info"]
+                        isLoading = false // Data loaded, so set loading state to false
+                                                showTapMeButton = true // Show Tap Me button again
+                                    }
+                    
                        }
-                //let landmarkName = String(data: returnedLandmark, encoding: .utf8)
-             //   let landmarkInfo = String(data: returnedLandmark, encoding: .utf8)
-               //self.landmarkName = landmarkName
-                //self.landmarkInfo = landmarkInfo
                 
-                let selectedInfo = [
-                    "landmarks_info" : self.landmarkName,
-                ]
-                
-                guard let jsonData = try? JSONSerialization.data(withJSONObject: selectedInfo) else {
-                    print("addUser: jsonData serialization error")
-                    return
-                }
-                guard let apiUrl = URL(string: "\(serverUrl)post_landmark_info/") else { // TODO REPLACE URL
-                    print("addUser: Bad URL")
-                    return
-                }
-                guard let token = UserDefaults.standard.string(forKey: "usertoken") else {
-                    return
-                }
-                
-                var request = URLRequest(url: apiUrl)
-                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-                request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Accept") // expect response in JSON
-                request.setValue("Token \(token)", forHTTPHeaderField: "Authorization")
-                request.httpMethod = "GET"
-                request.httpBody = jsonData
-                
-                do {
-                    let (data, response) = try await URLSession.shared.data(for: request)
-                    
-                    if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
-                        print("login: HTTP STATUS: \(httpStatus.statusCode)")
-                        return
-                    }
-                    
-                    guard let jsonObj = try? JSONSerialization.jsonObject(with: data) as? [String:Any] else {
-                        print("login: failed JSON deserialization")
-                        return
-                    }
-
-                } catch {
-                    print("Error: \(error.localizedDescription)")
-                    return
-                }
-
-                
-                
+//                let selectedInfo = [
+//                    "landmarks_info" : self.landmarkName,
+//                ]
+//                
+//                guard let jsonData = try? JSONSerialization.data(withJSONObject: selectedInfo) else {
+//                    print("addUser: jsonData serialization error")
+//                    return
+//                }
+//                
+//                guard let apiUrl = URL(string: "\(serverUrl)post_landmark_info/") else { // TODO REPLACE URL
+//                    print("addUser: Bad URL")
+//                    return
+//                }
+//                guard let token = UserDefaults.standard.string(forKey: "usertoken") else {
+//                    return
+//                }
+//                
+//                var request = URLRequest(url: apiUrl)
+//                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+//                request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Accept") // expect response in JSON
+//                request.setValue("Token \(token)", forHTTPHeaderField: "Authorization")
+//                request.httpMethod = "GET"
+//                request.httpBody = jsonData
+//                
+//                do {
+//                    let (data, response) = try await URLSession.shared.data(for: request)
+//                    print(data)
+//                    if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
+//                        print("login: HTTP STATUS: \(httpStatus.statusCode)")
+//                        return
+//                    }
+//
+//                    guard let jsonObj = try? JSONSerialization.jsonObject(with: data) as? [String:String] else {
+//                        print("login: failed JSON deserialization")
+//                        return
+//                    }
+//                    self.landmarkInfo = jsonObj["landmarks_info"]
+//
+//                } catch {
+//                    print("Error: \(error.localizedDescription)")
+//                    return
+//                }
+//                
                 
             }
         }
@@ -224,7 +237,7 @@ struct BottomSheetInfoView : View {
     
     var body: some View {
         VStack(spacing: 10) {
-            AudioView(isPresented: $showInfoPopup)
+            AudioView(isPresented: $showInfoPopup,textToSpeechScript: landmarkInfo ?? "")
             if let name = landmarkName, let info = landmarkInfo {
                 Text(name)
                     .font(.title)
