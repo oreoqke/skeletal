@@ -103,7 +103,7 @@ struct SignUpView: View {
                 }
                 
                 .fullScreenCover(isPresented: $navigateToOnboarding) {
-                    Onboard(signinProcess: $navigateToOnboarding, showDismiss: $showDismiss)
+      //              Onboard(signinProcess: $navigateToOnboarding, showDismiss: $showDismiss)
                     
                }
                 if showDismiss {

@@ -358,7 +358,7 @@ struct DayView: View {
         })
         .refreshable {
             // This refreshes the entire itinerary
-            await itineraryEntries.getLandmarks(day: day)
+          //  await itineraryEntries.getLandmarks(day: day)
             //this selects the places recommended for the day
         }
         .padding(.horizontal)

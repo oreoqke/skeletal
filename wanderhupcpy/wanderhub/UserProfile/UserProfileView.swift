@@ -27,7 +27,7 @@ struct UserProfileView: View {
             }
             .frame(width: 352, height: 39)
             VStack {
-                ScrollView {
+           //     ScrollView {
                     List(userHistorystore.landmarkVisits.indices, id: \.self) { index in
                         LandmarkListRow(visit: userHistorystore.landmarkVisits[index])
                             .listRowSeparator(.hidden)
@@ -37,7 +37,7 @@ struct UserProfileView: View {
                     .refreshable {
                         printLandmarkVisits()
                     }
-                }
+           //     }
                 .frame(maxHeight: .infinity)
             }
             

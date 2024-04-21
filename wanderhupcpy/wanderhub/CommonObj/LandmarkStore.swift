@@ -19,78 +19,78 @@ final class LandmarkStore: ObservableObject {
     // private constructor (we don't actually want instances of this since dummy data)
     private init() {
         
-        self.landmarks.append(contentsOf: [
-            
-            // Bell Tower
-            Landmark(name: "Bell Tower", 
-                     message: "Ding Dong",
-                     timestamp: "now",
-                     geodata: GeoData(lat: 42.2743155694, lon: -83.736413721),
-                     Day2Visit:  1,
-                     rating: 3),
-            
-            // UMich
-            Landmark(name: "University of Michigan - Ann Arbor", 
-                     timestamp: "now",
-                     geodata: GeoData(lat:  42.278564, lon: -83.737998),
-                     Day2Visit:  1,
-                     rating: 3),
-            
-            // Big House
-            Landmark(name: "The Big House", 
-                     message: "Hail to The Victors!",
-                     timestamp: "now",
-                     geodata: GeoData(lat: 42.265649, lon: -83.748443),
-                     Day2Visit:  1,
-                     rating: 3),
-            
-            // Arb
-            Landmark(name: "Nichols Arboretum", 
-                     timestamp: "now",
-                     geodata: GeoData(lat: 42.280800, lon: -83.726784),
-                     Day2Visit:  1),
-            Landmark(name: "The Diag",
-                     message: "Center of campus life",
-                     timestamp: "now",
-                     geodata: GeoData(lat: 42.276045, lon: -83.738211),
-                     Day2Visit:  2),
-            // Gerald R. Ford Presidential Library
-            Landmark(name: "Gerald R. Ford Presidential Library",
-                     message: "A glimpse into U.S. presidential history",
-                     timestamp: "now",
-                     geodata: GeoData(lat: 42.280791, lon: -83.739841),
-                     Day2Visit:  2),
-
-            // Kelsey Museum of Archaeology
-            Landmark(name: "Kelsey Museum of Archaeology",
-                     message: "Ancient and medieval artifacts on display",
-                     timestamp: "now",
-                     geodata: GeoData(lat: 42.275652, lon: -83.735666),
-                     Day2Visit:  3),
-
-            // Matthaei Botanical Gardens
-            Landmark(name: "Matthaei Botanical Gardens",
-                     message: "Explore plant diversity in natural habitats",
-                     timestamp: "now",
-                     geodata: GeoData(lat: 42.299780, lon: -83.662117),
-                     Day2Visit:  4),
-
-            // Power Center for the Performing Arts
-            Landmark(name: "Power Center for the Performing Arts",
-                     message: "Modernist architecture and performing arts venue",
-                     timestamp: "now",
-                     geodata: GeoData(lat: 42.281538, lon: -83.738224),
-                     Day2Visit:  4),
-
-            // Ann Arbor Hands-On Museum
-            Landmark(name: "Ann Arbor Hands-On Museum",
-                     message: "Interactive science and technology exhibits",
-                     timestamp: "now",
-                     geodata: GeoData(lat: 42.280684, lon: -83.747073),
-                     Day2Visit:  4)
-
-        ])
-    }
+//        self.landmarks.append(contentsOf: [
+//            
+//            // Bell Tower
+//            Landmark(name: "Bell Tower", 
+//                     message: "Ding Dong",
+//                     timestamp: "now",
+//                     geodata: GeoData(lat: 42.2743155694, lon: -83.736413721),
+//                     Day2Visit:  1,
+//                     rating: 3),
+//            
+//            // UMich
+//            Landmark(name: "University of Michigan - Ann Arbor", 
+//                     timestamp: "now",
+//                     geodata: GeoData(lat:  42.278564, lon: -83.737998),
+//                     Day2Visit:  1,
+//                     rating: 3),
+//            
+//            // Big House
+//            Landmark(name: "The Big House", 
+//                     message: "Hail to The Victors!",
+//                     timestamp: "now",
+//                     geodata: GeoData(lat: 42.265649, lon: -83.748443),
+//                     Day2Visit:  1,
+//                     rating: 3),
+//            
+//            // Arb
+//            Landmark(name: "Nichols Arboretum", 
+//                     timestamp: "now",
+//                     geodata: GeoData(lat: 42.280800, lon: -83.726784),
+//                     Day2Visit:  1),
+//            Landmark(name: "The Diag",
+//                     message: "Center of campus life",
+//                     timestamp: "now",
+//                     geodata: GeoData(lat: 42.276045, lon: -83.738211),
+//                     Day2Visit:  2),
+//            // Gerald R. Ford Presidential Library
+//            Landmark(name: "Gerald R. Ford Presidential Library",
+//                     message: "A glimpse into U.S. presidential history",
+//                     timestamp: "now",
+//                     geodata: GeoData(lat: 42.280791, lon: -83.739841),
+//                     Day2Visit:  2),
+//
+//            // Kelsey Museum of Archaeology
+//            Landmark(name: "Kelsey Museum of Archaeology",
+//                     message: "Ancient and medieval artifacts on display",
+//                     timestamp: "now",
+//                     geodata: GeoData(lat: 42.275652, lon: -83.735666),
+//                     Day2Visit:  3),
+//
+//            // Matthaei Botanical Gardens
+//            Landmark(name: "Matthaei Botanical Gardens",
+//                     message: "Explore plant diversity in natural habitats",
+//                     timestamp: "now",
+//                     geodata: GeoData(lat: 42.299780, lon: -83.662117),
+//                     Day2Visit:  4),
+//
+//            // Power Center for the Performing Arts
+//            Landmark(name: "Power Center for the Performing Arts",
+//                     message: "Modernist architecture and performing arts venue",
+//                     timestamp: "now",
+//                     geodata: GeoData(lat: 42.281538, lon: -83.738224),
+//                     Day2Visit:  4),
+//
+//            // Ann Arbor Hands-On Museum
+//            Landmark(name: "Ann Arbor Hands-On Museum",
+//                     message: "Interactive science and technology exhibits",
+//                     timestamp: "now",
+//                     geodata: GeoData(lat: 42.280684, lon: -83.747073),
+//                     Day2Visit:  4)
+//
+//        ])
+   }
     
     private let nFields = Mirror(reflecting: Landmark()).children.count
     
@@ -118,6 +118,37 @@ final class LandmarkStore: ObservableObject {
     func getLandmarks(day: Int?) async {
         // FIX THIS
         // TODO: FIXME IMPLEMENT ME
+        guard let apiUrl = URL(string: "\(serverUrl)get_landmarks/") else { // TODO REPLACE URL
+            print("addUser: Bad URL")
+            return
+        }
+        guard let token = UserDefaults.standard.string(forKey: "usertoken") else {
+            return
+        }
+        
+        var request = URLRequest(url: apiUrl)
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Accept") // expect response in JSON
+        request.setValue("Token \(token)", forHTTPHeaderField: "Authorization")
+        request.httpMethod = "GET"
+        
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            
+            if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
+                print("onboard: HTTP STATUS: \(httpStatus.statusCode)")
+                print("Response:")
+                print(response)
+                return
+            }
+            print("Response:")
+            print(response)
+
+        } catch {
+            print("Error: \(error.localizedDescription)")
+            return
+        }
+
 
 
         return

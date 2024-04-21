@@ -13,8 +13,8 @@ struct Preference {
 }
 
 struct Onboard: View {
-   @Binding var signinProcess: Bool
-    @Binding var showDismiss: Bool
+   //@Binding var signinProcess: Bool
+   // @Binding var showDismiss: Bool
 
     @State private var preferences: [Preference] = [
         Preference(name: "Art", isSelected: false),
@@ -62,8 +62,8 @@ struct Onboard: View {
                 Task{
                  await sendPreferencesToBackend()
                 }
-                showDismiss.toggle()
-                signinProcess.toggle()
+        //        showDismiss.toggle()
+          //      signinProcess.toggle()
                 
             }) {
                 VStack(spacing: 10) {
@@ -101,7 +101,7 @@ struct Onboard: View {
             print("addUser: jsonData serialization error")
             return
         }
-        guard let apiUrl = URL(string: "\(serverUrl)initialize_user_preferences/") else { // TODO REPLACE URL
+        guard let apiUrl = URL(string: "\(serverUrl)initialize-user-preferences/") else { // TODO REPLACE URL
             print("addUser: Bad URL")
             return
         }
