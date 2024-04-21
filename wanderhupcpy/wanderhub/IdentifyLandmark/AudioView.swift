@@ -13,49 +13,6 @@ struct AudioView: View {
     @Binding var isPresented: Bool
     @Environment(AudioPlayer.self) private var audioPlayer
     let textToSpeechScript: String // Added property
-
-//    let myscript = """
-//    (Black screen with text; The sound of buzzing bees can be heard) According to all known laws
-//    of aviation,
-//     :
-//    there is no way a bee
-//    should be able to fly.
-//     :
-//    Its wings are too small to get
-//    its fat little body off the ground.
-//     :
-//    The bee, of course, flies anyway
-//     :
-//    because bees don't care
-//    what humans think is impossible.
-//    BARRY BENSON:
-//    (Barry is picking out a shirt)
-//    Yellow, black. Yellow, black.
-//    Yellow, black. Yellow, black.
-//     :
-//    Ooh, black and yellow!
-//    Let's shake it up a little.
-//    JANET BENSON:
-//    Barry! Breakfast is ready!
-//    BARRY:
-//    Coming!
-//     :
-//    Hang on a second.
-//    (Barry uses his antenna like a phone)
-//     :
-//    Hello?
-//    ADAM FLAYMAN:
-//    
-//    (Through phone)
-//    - Barry?
-//    BARRY:
-//    - Adam?
-//    ADAM:
-//    - Can you believe this is happening?
-//    BARRY:
-//    - I can't. I'll pick you up.
-//    (Barry flies down the stairs)
-//    """
     
     var body: some View {
         VStack {
@@ -70,12 +27,16 @@ struct AudioView: View {
                 }
                 else {
                     Spacer()
+                        .frame(width: 43)
                     StopButton()
                     Spacer()
+                        .frame(width: 50)
                     RwndButton()
                     Spacer()
+                        .frame(width: 50)
                     PlayButton()
                     Spacer()
+                        .frame(width: 60)
                     FfwdButton()
                     Spacer()
                 }

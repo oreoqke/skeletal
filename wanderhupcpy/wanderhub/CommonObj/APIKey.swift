@@ -7,4 +7,4 @@
 
 import Foundation
 
-let speechCred = "hello"
+let speechCred = "AIzaSyDreEOEjaMS33Z1_OlL3K5PHPh7rHx4y2I"
