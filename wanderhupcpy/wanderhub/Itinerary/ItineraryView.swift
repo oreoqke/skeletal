@@ -265,7 +265,9 @@ struct ItinerarySingleEntryExpandedView: View {
                 Spacer()
                 
                 Button(action: {
-                    itineraryEntries.removeLandmark(id: landmark.id)
+                    Task{
+                     await itineraryEntries.removeLandmark(id: landmark.id)
+                    }
                 }) {
                     Text("Delete")
                         .font(Font.body)
@@ -358,7 +360,7 @@ struct DayView: View {
         })
         .refreshable {
             // This refreshes the entire itinerary
-          //  await itineraryEntries.getLandmarks(day: day)
+            await itineraryEntries.getLandmarksDay(day: day)
             //this selects the places recommended for the day
         }
         .padding(.horizontal)
