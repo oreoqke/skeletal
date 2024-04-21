@@ -102,8 +102,10 @@ struct LandmarkView: View {
             Spacer()
             
             Button(action: {
-                itineraryEntries.removeLandmark(id: landmark.id)
-                presentationMode.wrappedValue.dismiss()
+                Task {
+                    await itineraryEntries.removeLandmark(id: landmark.id)
+                    presentationMode.wrappedValue.dismiss()
+                }
             }) {
                 Text("Delete")
                     .font(Font.body)
