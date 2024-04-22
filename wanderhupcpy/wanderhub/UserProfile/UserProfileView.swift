@@ -130,6 +130,8 @@ struct UserProfileView: View {
 
 struct LandmarkListRow: View {
     let visit: LandmarkVisit
+    @State private var reloadID = UUID() // State variable to trigger reload
+
 
     
     var body: some View {
@@ -186,7 +188,8 @@ struct LandmarkListRow: View {
         .shadow(
             color: Color(red: 0.71, green: 0.74, blue: 0.79, opacity: 0.12), radius: 16, y: 6
         )
-        
+        .id(reloadID) // Attach ID to force reload
+
     }
     
     func submitRating(id: String) async {
@@ -237,6 +240,7 @@ struct LandmarkListRow: View {
             print("Error: \(error.localizedDescription)")
             return
         }
+        reloadID = UUID()
 
         
         
