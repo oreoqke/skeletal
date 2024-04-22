@@ -102,6 +102,7 @@ struct Onboard: View {
             return
         }
         guard let apiUrl = URL(string: "\(serverUrl)initialize-user-preferences/") else { // TODO REPLACE URL
+        guard let apiUrl = URL(string: "\(serverUrl)initialize-user-preferences/") else { // TODO REPLACE URL
             print("addUser: Bad URL")
             return
         }
