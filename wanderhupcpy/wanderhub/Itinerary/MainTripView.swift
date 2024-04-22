@@ -158,7 +158,7 @@ struct newLandmark: Identifiable, Hashable, Decodable {
     var longitude: Double
     var trip_day: Int
         
-    var id: Int { it_id }
+    var id: String { landmark_name }
     
     //var favorite: Bool = false
 }
@@ -357,19 +357,26 @@ class UserItineraryStore :ObservableObject {
                        print("Failed to parse landmarks array from JSON data")
                        return
                    }
-                
+                print("final     ", landmarksArray)
+
                 
                 let decodedLandmarks = try landmarksArray.map { landmarkDict -> newLandmark in
                         let landmarkData = try JSONSerialization.data(withJSONObject: landmarkDict)
                         return try JSONDecoder().decode(newLandmark.self, from: landmarkData)
                     }
                 
+                print("Decoded landmarks: ", decodedLandmarks)
+                self.newLandmarks = decodedLandmarks
+                
                 DispatchQueue.main.async {
-                    self.newLandmarks = decodedLandmarks     
+                    self.newLandmarks = decodedLandmarks 
+                    print("self.newlandmarks is ",self.newLandmarks)
+
                 }
+                print("self.newlandmarks is ",self.newLandmarks)
                 // Set the current trip ID to the ID of the first itinerary, if available
                 if let firstItineraryID = decodedLandmarks.first?.id {
-                    self.currentTripID = firstItineraryID
+                    self.currentTripID = Int(firstItineraryID)
                 }
                 
             } catch {
