@@ -18,7 +18,6 @@ struct Itinerary: Decodable {
 struct MainTripView: View {
     @ObservedObject var viewModel: NavigationControllerViewModel
     @ObservedObject var userItineraryStore = UserItineraryStore.shared // Observe the UserItineraryStore
-    
     var body: some View {
         NavigationStack{
             VStack {
@@ -34,7 +33,7 @@ struct MainTripView: View {
                         OptionCardView(optionTitle: "Start New Trip", iconName: "plus.circle.fill", backgroundColor: Color.blue)
                     }
                     .background(backCol)
-                    NavigationLink(destination: ItineraryView(viewModel: viewModel)) {
+                    NavigationLink(destination: ItineraryView(viewModel: viewModel, itineraryID: userItineraryStore.currentTripID ?? 0)) {
                         OptionCardView(optionTitle: "Current Itinerary", iconName: "list.bullet", backgroundColor: Color.green)
                     }
                     .background(backCol)
@@ -59,12 +58,21 @@ struct MainTripView: View {
                     
                     ScrollView(showsIndicators: false) {
                         ForEach(userItineraryStore.itineraries, id: \.id) { itinerary in
-                            NavigationLink(destination: ItineraryView(viewModel: viewModel)){
+                            NavigationLink(destination: ItineraryView(viewModel: viewModel, itineraryID: itinerary.id)){
                                 HStack{
-                                    VStack(alignment: .leading) {
-                                        Text(itinerary.it_name).font(.headline)
-                                        Text("\(itinerary.city_name), \(itinerary.start_date)").font(.subheadline)
+                                    Button(action: {
+                                        Task {
+                                            await userItineraryStore.getTripDetails(itineraryID: itinerary.id)
+                                        }
+                                    }) {
+                                        VStack(alignment: .leading) {
+                                            Text(itinerary.it_name)
+                                                .font(.headline)
+                                            Text("\(itinerary.city_name), \(itinerary.start_date)")
+                                                .font(.subheadline)
+                                        }
                                     }
+
                                     
                                 }
                                 .padding(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
@@ -75,6 +83,11 @@ struct MainTripView: View {
                                     color: Color(red: 0.71, green: 0.74, blue: 0.79, opacity: 0.12), radius: 16, y: 6
                                 )
                             }
+//                            .onAppear {
+//                                Task {
+//                                    await userItineraryStore.getTripDetails(itineraryID: itinerary.id)
+//                                }
+//                            }
                         }
                     }
                     .onAppear {
@@ -97,7 +110,7 @@ struct MainTripView: View {
         }
         .background(backCol)
         .navigationDestination(isPresented: $viewModel.NavigatingToCurrentTrip) {
-            ItineraryView(viewModel: viewModel)
+            ItineraryView(viewModel: viewModel, itineraryID: userItineraryStore.currentTripID ?? 0)
         }
         
     }
@@ -144,6 +157,7 @@ class UserItineraryStore :ObservableObject {
     static let shared = UserItineraryStore()
     private init() {}
     @Published var itineraries: [Itinerary] = [] // Use @Published here instead of @ObservedObject
+    @Published var currentTripID: Int? // Variable to hold the current trip's ID
     
     func getUpcomingTrips() async {
         
@@ -191,6 +205,10 @@ class UserItineraryStore :ObservableObject {
                 DispatchQueue.main.async {
                     self.itineraries = decodedLandmarks
                 }
+                // Set the current trip ID to the ID of the first itinerary, if available
+                if let firstItineraryID = decodedLandmarks.first?.id {
+                    self.currentTripID = firstItineraryID
+                }
                 
             } catch {
                 print("Error decoding JSON: \(error)")
@@ -206,21 +224,29 @@ class UserItineraryStore :ObservableObject {
         
     }
     
-    func getTripDetails() async {
+    func getTripDetails(itineraryID: Int) async {
         
-        guard let apiUrl = URL(string: "\(serverUrl)get-user-itineraries/") else { // TODO REPLACE URL
+        let jsonObj = ["itinerary_id": itineraryID]
+        
+        guard let jsonData = try? JSONSerialization.data(withJSONObject: jsonObj) else {
+            print("postChatt: jsonData serialization error")
+            return
+        }
+        
+        guard let apiUrl = URL(string: "\(serverUrl)get-itinerary-details/") else { // TODO REPLACE URL
             print("addUser: Bad URL")
             return
         }
         guard let token = UserDefaults.standard.string(forKey: "usertoken") else {
             return
         }
-        
+        print(jsonObj)
         var request = URLRequest(url: apiUrl)
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Accept") // expect response in JSON
         request.setValue("Token \(token)", forHTTPHeaderField: "Authorization")
-        request.httpMethod = "GET"
+        request.httpMethod = "POST"
+        request.httpBody = jsonData
         
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
@@ -231,9 +257,7 @@ class UserItineraryStore :ObservableObject {
                 print(response)
                 return
             }
-            print("Response:")
-            print(response)
-            print("get upcoming trips::")
+            print("get trip details::")
             guard let jsonObj = try? JSONSerialization.jsonObject(with: data) as? [String:Any] else {
                 print("addUser: failed JSON deserialization")
                 return

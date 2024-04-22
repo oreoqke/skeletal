@@ -13,7 +13,7 @@ struct Preference {
 }
 
 struct Onboard: View {
-    @Binding var signinProcess: Bool
+   @Binding var signinProcess: Bool
     @Binding var showDismiss: Bool
     
     
@@ -63,8 +63,8 @@ struct Onboard: View {
                 Task{
                     await sendPreferencesToBackend()
                 }
-                showDismiss.toggle()
-                signinProcess.toggle()
+               showDismiss.toggle()
+            signinProcess.toggle()
                 
             }) {
                 VStack(spacing: 10) {
@@ -109,7 +109,7 @@ struct Onboard: View {
             guard let token = UserDefaults.standard.string(forKey: "usertoken") else {
                 return
             }
-            //   let token = "78f0821dacef6ecff7ddb913e13b7018725b83e2"
+            // let token = "8f2af7b42bfab0984014567b3688a24f672e9530"
             //FIXME: CHANGE THIS, THIS IS ONLY FOR TESTING TOKEN IS FOR ONBOARD_PLEASE
             
             var request = URLRequest(url: apiUrl)

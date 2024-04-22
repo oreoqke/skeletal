@@ -388,7 +388,8 @@ struct ItineraryView: View {
     @State var selectedDay = 1
     
     @ObservedObject var viewModel: NavigationControllerViewModel
-    
+    var itineraryID: Int // Property to hold itinerary id
+
     // moving a landmark around
     @State var draggedLandmark: Landmark?
     

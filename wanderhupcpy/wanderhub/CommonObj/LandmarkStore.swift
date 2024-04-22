@@ -239,7 +239,7 @@ final class LandmarkStore: ObservableObject {
                 return
             }
             
-            print("get nearby  trips::")
+          //  print("get nearby  trips::")
             //            guard let jsonObj = try? JSONSerialization.jsonObject(with: data) as? [String:Any] else {
             //                print("addUser: failed JSON deserialization")
             //                return
@@ -251,12 +251,12 @@ final class LandmarkStore: ObservableObject {
                     print("Failed to parse JSON data")
                     return
                 }
-                print(landmarksArray)
+              //  print(landmarksArray)
                 
                 let decodedLandmarks = try landmarksArray.map { landmarkDict in
                     return try JSONDecoder().decode(NearestLandmark.self, from: JSONSerialization.data(withJSONObject: landmarkDict))
                 }
-                print(decodedLandmarks)
+             //   print(decodedLandmarks)
                 
                 DispatchQueue.main.async {
                     self.nearest = decodedLandmarks

@@ -104,12 +104,15 @@ struct UserProfileView: View {
     private func printLandmarkVisits() {
         print("tetsign from profile view",userHistorystore.landmarkVisits)
     }
+    
+   
 }
 
 
 
 struct LandmarkListRow: View {
     let visit: LandmarkVisit
+
     
     var body: some View {
         HStack() {
@@ -144,11 +147,22 @@ struct LandmarkListRow: View {
 //                }
                 Text("\(visit.rating)/5, \(visit.visit_time)")
                 
+                Button(action: {
+                    print("clicked")
+                    Task {
+                        await submitRating(id: visit.landmark_name)
+                    }
+                                }) {
+                                    Text("Submit Rating")
+                                        .foregroundColor(.blue)
+                                        .padding(.top, 4)
+                                }
+                
             }
             Spacer()
         }
         .padding(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
-        .frame(width: 370, height: 96)
+        .frame(width: 370, height: 150)
         .background(Color(red: 0.94, green: 0.92, blue: 0.87))
         .cornerRadius(8)
         .shadow(
@@ -156,7 +170,60 @@ struct LandmarkListRow: View {
         )
         
     }
-//    
+    
+    func submitRating(id: String) async {
+        //var landmark2Rate = landmarks.first { $0.id == id }
+        //landmark2Rate?.rating = rating
+        //make a post request to rate the landmark
+        
+        let jsonObj = ["landmark_name": id,
+                       "new_rating": "5"]
+        print(jsonObj)
+        guard let jsonData = try? JSONSerialization.data(withJSONObject: jsonObj) else {
+            print("addUser: jsonData serialization error")
+            return
+        }
+        
+        guard let apiUrl = URL(string: "\(serverUrl)testing_update_landmark_rating/") else { // TODO REPLACE URL
+            print("addUser: Bad URL")
+            return
+        }
+        
+        guard let token = UserDefaults.standard.string(forKey: "usertoken") else {
+            return
+        }
+       
+        var request = URLRequest(url: apiUrl)
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Accept") // expect response in JSON
+        request.setValue("Token \(token)", forHTTPHeaderField: "Authorization")
+        request.httpMethod = "POST"
+        request.httpBody = jsonData
+
+        
+        do {
+
+            let (data, response) = try await URLSession.shared.data(for: request)
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
+                print("submit rating: HTTP STATUS: \(httpResponse.statusCode)")
+                print("Response:")
+                print(response)
+                return
+            }
+
+            print("Response:")
+            print(response)
+    
+            
+        } catch {
+            print("Error: \(error.localizedDescription)")
+            return
+        }
+
+        
+        
+    }
+//
 //    func formatDate(_ String: Date) -> String {
 //        let components = dateTimeString.components(separatedBy: " ")
 //
@@ -171,4 +238,7 @@ struct LandmarkListRow: View {
 //        formatter.dateFormat = "MMM d, yyyy h:mm a"
 //        return formatter.string(from: date)
 //    }
+    
+    
+    
 }

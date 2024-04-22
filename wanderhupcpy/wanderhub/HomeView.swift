@@ -98,6 +98,9 @@ struct HomeView: View {
     @StateObject var viewmodel = NavigationControllerViewModel()
     @ObservedObject var destinations = Destinations()
     
+    @ObservedObject var userItineraryStore = UserItineraryStore.shared
+
+    
     init () {
         Task {
             // await LandmarkStore.shared.getLandmarks(day: 1)
@@ -217,8 +220,8 @@ struct HomeView: View {
                     .background(Color(red: 1, green: 0.83, blue: 0.51))
                     .cornerRadius(10)
                     .offset(x: 0, y: 0)
-                
-                NavigationLink(destination: ItineraryView(viewModel: viewmodel)) {
+
+                NavigationLink(destination: ItineraryView(viewModel: viewmodel, itineraryID: userItineraryStore.currentTripID ?? 0)) {
                     Text("Go to current trip")
                         .font(Font.custom("Poppins", size: 16).weight(.medium))
                         .foregroundColor(Color(red: 0.96, green: 0.40, blue: 0.33))
