@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 // TODO: temporarily here, move this somewhere more sensible
-struct Landmark: Identifiable, Hashable {
+struct Landmark: Identifiable, Hashable{
     var id = UUID().uuidString
     var name: String? // this should probably not be an optional
     var message: String?
@@ -20,5 +20,6 @@ struct Landmark: Identifiable, Hashable {
     // what other fields are necessary globally? we could have a single fetch call for all data..?
     
     var favorite: Bool = false
+    
 }
 

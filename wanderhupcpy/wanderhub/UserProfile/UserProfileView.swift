@@ -19,19 +19,20 @@ struct UserProfileView: View {
     
     
     var body: some View {
-        VStack{
-            GreetUser()
-            ProfileOptions()
-            HStack{
-                Text("Past Landmarks:")
-                    .font(Font.custom("Poppins", size: 16).weight(.semibold))
-                    .foregroundColor(Color(red: 0.96, green: 0.40, blue: 0.33))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            .frame(width: 352, height: 39)
-            VStack {
+        NavigationStack{
+            VStack{
+                GreetUser()
+                ProfileOptions()
+                HStack{
+                    Text("Past Landmarks:")
+                        .font(Font.custom("Poppins", size: 16).weight(.semibold))
+                        .foregroundColor(Color(red: 0.96, green: 0.40, blue: 0.33))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .frame(width: 352, height: 39)
+                VStack {
                     List(identified.indices, id: \.self) { index in
-                        LandmarkListRow(visit: identified[index])
+                        LandmarkListRow(visit: $identified[index], tempRating: $identified[index].rating)
                             .listRowSeparator(.hidden)
                             .listRowBackground(backCol)
                             .id(refreshID)
@@ -45,25 +46,26 @@ struct UserProfileView: View {
                             identified = UserHistoryStore.shared.visitedPlaces()
                         }
                     }
-                .frame(maxHeight: .infinity)
-            }
-            .onAppear {
-                Task {
-                    await userHistorystore.getHistory()
-                    identified = UserHistoryStore.shared.visitedPlaces()
+                    .frame(maxHeight: .infinity)
+                }
+                .onAppear {
+                    Task {
+                        await userHistorystore.getHistory()
+                        identified = UserHistoryStore.shared.visitedPlaces()
+                    }
+                    
+                    
+                }
+                .onChange(of: userHistorystore.landmarkVisits) {  oldValue, newValue in
+                    refreshID = UUID() // Update UUID to force redraw
                 }
                 
-                
+                Spacer()
+                ChildNavController(viewModel: viewModel)
             }
-            .onChange(of: userHistorystore.landmarkVisits) {  oldValue, newValue in
-                refreshID = UUID() // Update UUID to force redraw
-            }
+            .background(backCol)
             
-            Spacer()
-            ChildNavController(viewModel: viewModel)
         }
-        .background(backCol)
-
     }
     
     @ViewBuilder
@@ -79,43 +81,48 @@ struct UserProfileView: View {
     
     @ViewBuilder
     private func ProfileOptions()-> some View {
-        VStack(alignment: .trailing, spacing: 0) {
-            HStack(spacing: 12) {
-                Text("Settings")
-                    .font(Font.custom("Poppins", size: 16).weight(.medium))
-                    .foregroundColor(Color(red: 0.96, green: 0.40, blue: 0.33))
-                    .frame(maxWidth: .infinity, alignment: .leading)
+            VStack(alignment: .trailing, spacing: 0) {
+//                HStack(spacing: 12) {
+//                    Text("Settings")
+//                        .font(Font.custom("Poppins", size: 16).weight(.medium))
+//                        .foregroundColor(Color(red: 0.96, green: 0.40, blue: 0.33))
+//                        .frame(maxWidth: .infinity, alignment: .leading)
+//                }
+//                .padding(EdgeInsets(top: 16, leading: 0, bottom: 16, trailing: 16))
+//                .frame(width: 343)
+//                .background(Color(red: 0.94, green: 0.92, blue: 0.87))
+//                .cornerRadius(10)
+                
+                @State var mock_sign: Bool = true
+                @State var mock_dismiss: Bool = true
+                NavigationLink(destination: Onboard(signinProcess: $mock_sign, showDismiss: $mock_dismiss)){
+                    HStack(spacing: 12) {
+                        Text("Preferences")
+                            .font(Font.custom("Poppins", size: 16).weight(.medium))
+                            .foregroundColor(Color(red: 0.96, green: 0.40, blue: 0.33))
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .padding(EdgeInsets(top: 16, leading: 0, bottom: 16, trailing: 16))
+                    .frame(width: 343)
+                    .background(Color(red: 0.94, green: 0.92, blue: 0.87))
+                }
+                NavigationLink(destination: FAQsView()){
+                    HStack(spacing: 12) {
+                        Text("FAQs")
+                            .font(Font.custom("Poppins", size: 16).weight(.medium))
+                            .foregroundColor(Color(red: 0.96, green: 0.40, blue: 0.33))
+                            .frame(maxWidth: .infinity, alignment: .leading) //
+                    }
+                    .padding(EdgeInsets(top: 16, leading: 0, bottom: 16, trailing: 16))
+                    .frame(width: 343)
+                    .background(Color(red: 0.94, green: 0.92, blue: 0.87))
+                    .cornerRadius(10)
+                }
             }
-            .padding(EdgeInsets(top: 16, leading: 0, bottom: 16, trailing: 16))
-            .frame(width: 343)
-            .background(Color(red: 0.94, green: 0.92, blue: 0.87))
-            .cornerRadius(10)
-            
-            HStack(spacing: 12) {
-                Text("Preferences")
-                    .font(Font.custom("Poppins", size: 16).weight(.medium))
-                    .foregroundColor(Color(red: 0.96, green: 0.40, blue: 0.33))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            .padding(EdgeInsets(top: 16, leading: 0, bottom: 16, trailing: 16))
-            .frame(width: 343)
-            .background(Color(red: 0.94, green: 0.92, blue: 0.87))
-            
-            HStack(spacing: 12) {
-                Text("FAQs")
-                    .font(Font.custom("Poppins", size: 16).weight(.medium))
-                    .foregroundColor(Color(red: 0.96, green: 0.40, blue: 0.33))
-                    .frame(maxWidth: .infinity, alignment: .leading) //
-            }
-            .padding(EdgeInsets(top: 16, leading: 0, bottom: 16, trailing: 16))
-            .frame(width: 343)
+            .frame(width: 356)
             .background(Color(red: 0.94, green: 0.92, blue: 0.87))
             .cornerRadius(10)
         }
-        .frame(width: 356, height: 170)
-        .background(Color(red: 0.94, green: 0.92, blue: 0.87))
-        .cornerRadius(10)
-    }
     
 
     
@@ -127,78 +134,90 @@ struct UserProfileView: View {
 }
 
 
+struct StarRatingView: View {
+    @Binding var rating: Int
+
+    var body: some View {
+        HStack {
+            ForEach(1...5, id: \.self) { star in
+                Image(systemName: star <= rating ? "star.fill" : "star")
+                    .foregroundColor(star <= rating ? .yellow : .gray)
+                    .onTapGesture {
+                        rating = star
+                    }
+            }
+        }
+    }
+}
 
 struct LandmarkListRow: View {
-    let visit: LandmarkVisit
-    @State private var reloadID = UUID() // State variable to trigger reload
+    @Binding var visit: LandmarkVisit
+    @Binding var tempRating: Int
 
 
-    
+
     var body: some View {
-        HStack() {
+        HStack {
             if let urlString = visit.image_url, let imageUrl = URL(string: urlString) {
-                                            AsyncImage(url: imageUrl) {
-                                                $0.resizable()
-                                                    .aspectRatio(contentMode: .fit)
-                                                .frame(width: 60, height: 60)
-                                            } placeholder: {
-                                                ProgressView()
-                                            }
-                                            .scaledToFit()
-                                            .frame(height: 181)
+                AsyncImage(url: imageUrl) {
+                    $0.resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 60, height: 60)
+                } placeholder: {
+                    Image(systemName: "airplane.departure")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 60, height: 60)
+                }
+                .scaledToFit()
+                .frame(height: 181)
             } else {
                 Image(systemName: "airplane.departure")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 60, height: 60)
             }
-            
-            VStack(alignment: .leading){
+
+            VStack(alignment: .leading) {
                 Text(visit.landmark_name).font(.headline)
                 Text("\(visit.city_name), \(visit.country_name)").font(.subheadline)
                 if visit.description != "Unknown" {
-                            Text("\(visit.description), \(visit.tags.joined(separator: ", "))")
-                }              
-//                if let visitDate = getDateObject(visit.visit_date, visit.visit_time) {
-//                    let formattedDate = formatDate(visitDate)
-//                    print(formattedDate) // Output: "Apr 20, 2029 4:00 PM"
-//                } else {
-//                    print("Invalid date or time format")
-//                }
-                Text("\(visit.rating)/5, \(visit.visit_time)")
+                    Text("\(visit.description), \(visit.tags.joined(separator: ", "))")
+                }
+                Text("Rated: \(visit.rating)/5, \(visit.visit_time)")
+                
+                StarRatingView(rating: $tempRating)
+                    .frame(width: 100, height: 20)
                 
                 Button(action: {
-                    print("clicked")
+                    print("Rating submitted: \(tempRating)")
                     Task {
-                        await submitRating(id: visit.landmark_name)
+                        await submitRating(id: visit.landmark_name, newRating: tempRating)
                     }
-                                }) {
-                                    Text("Submit Rating")
-                                        .foregroundColor(.blue)
-                                        .padding(.top, 4)
-                                }
-                
+                }) {
+                    Text("Submit Rating")
+                        .foregroundColor(.blue)
+                        .padding(.top, 4)
+                }
             }
             Spacer()
         }
         .padding(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
-        .frame(width: 370, height: 150)
+        .frame(width: 370, height: 220) // Adjusted for additional content
         .background(Color(red: 0.94, green: 0.92, blue: 0.87))
         .cornerRadius(8)
         .shadow(
             color: Color(red: 0.71, green: 0.74, blue: 0.79, opacity: 0.12), radius: 16, y: 6
         )
-        .id(reloadID) // Attach ID to force reload
-
     }
     
-    func submitRating(id: String) async {
+    func submitRating(id: String, newRating: Int) async {
         //var landmark2Rate = landmarks.first { $0.id == id }
         //landmark2Rate?.rating = rating
         //make a post request to rate the landmark
         
         let jsonObj = ["landmark_name": id,
-                       "new_rating": "5"]
+                       "new_rating": String(newRating)]
         print(jsonObj)
         guard let jsonData = try? JSONSerialization.data(withJSONObject: jsonObj) else {
             print("addUser: jsonData serialization error")

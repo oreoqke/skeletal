@@ -54,7 +54,7 @@ class UserHistoryStore: ObservableObject {
 
         
         AF.request(apiUrl, method: .get, headers: headers).responseData { response in
-            debugPrint(response)
+            //debugPrint(response)
             guard let data = response.data else {
                 print("getHistory: No data received")
                 return
@@ -64,7 +64,7 @@ class UserHistoryStore: ObservableObject {
                 let decoder = JSONDecoder()
                 let decodedLandmarkVisits = try decoder.decode([LandmarkVisit].self, from: data)
                 self.landmarkVisits = decodedLandmarkVisits
-                print("Updated landmark visits:", self.landmarkVisits)
+                //print("Updated landmark visits:", self.landmarkVisits)
             } catch {
                    print("getHistory: Error decoding JSON - \(error)")
                 }
