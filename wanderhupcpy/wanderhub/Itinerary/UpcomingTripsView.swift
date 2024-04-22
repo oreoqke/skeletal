@@ -19,7 +19,7 @@ class UpcomingTrips: ObservableObject {
     
     //FIXME: Implement Upcoming trips
     func get_destinations() {
-        self.destinations = [destination1, destination2, destination3, destination4]
+    //    self.destinations = [destination1, destination2, destination3, destination4]
         return
     }
     
@@ -81,9 +81,9 @@ struct UpcomingTripsView: View {
                 .frame(width: 60, height: 60)
             
             VStack(alignment: .leading){
-                Text(destination.destination).font(.headline)
-                Text("\(destination.city), \(destination.country)").font(.subheadline)
-                Text(destination.interests)
+                Text(destination.landmark_name).font(.headline)
+                Text("\(destination.city_name), \(destination.country_name)").font(.subheadline)
+                Text(destination.tags.joined(separator: ", "))
             }
             Spacer()
         }

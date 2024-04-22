@@ -131,7 +131,7 @@ final class LandmarkStore: ObservableObject {
             let (data, response) = try await URLSession.shared.data(for: request)
             
             if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
-                print("onboard: HTTP STATUS: \(httpStatus.statusCode)")
+                print("removeLandmark: HTTP STATUS: \(httpStatus.statusCode)")
                 print("Response:")
                 print(response)
                 return
@@ -150,6 +150,57 @@ final class LandmarkStore: ObservableObject {
         var landmark2Rate = landmarks.first { $0.id == id }
         landmark2Rate?.rating = rating
         //make a post request to rate the landmark
+        
+        let jsonObj = ["landmark_name": landmark2Rate?.name as Any,
+                       "new_rating": rating] as [String : Any]
+        
+        guard let jsonData = try? JSONSerialization.data(withJSONObject: jsonObj) else {
+            print("addUser: jsonData serialization error")
+            return
+        }
+        
+        guard let apiUrl = URL(string: "\(serverUrl)testing_update_landmark_rating/") else { // TODO REPLACE URL
+            print("addUser: Bad URL")
+            return
+        }
+        
+        guard let token = UserDefaults.standard.string(forKey: "usertoken") else {
+            return
+        }
+        
+        var request = URLRequest(url: apiUrl)
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Accept") // expect response in JSON
+        request.setValue("Token \(token)", forHTTPHeaderField: "Authorization")
+        request.httpMethod = "POST"
+        request.httpBody = jsonData
+
+        
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            
+            if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
+                print("submitRating: HTTP STATUS: \(httpStatus.statusCode)")
+                print("Response:")
+                print(response)
+                return
+            }
+            print("Response:")
+            print(response)
+            print("get upcoming trips::")
+            guard let jsonObj = try? JSONSerialization.jsonObject(with: data) as? [String:Any] else {
+                print("addUser: failed JSON deserialization")
+                return
+            }
+            print(jsonObj)
+            
+        } catch {
+            print("Error: \(error.localizedDescription)")
+            return
+        }
+
+        
+        
     }
     
     func getNearest() async {
@@ -158,7 +209,7 @@ final class LandmarkStore: ObservableObject {
     }
     
     func getLandmarksDay(day: Int?) async {
-        await getLandmarks(ItinId: 1)
+        await getLandmarks(day: 1)
     }
 
     // TODO: ADD AUTHORIZATION. USE WanderHubID.shared.id TO SEND REQUEST TO BACKEND
@@ -183,7 +234,7 @@ final class LandmarkStore: ObservableObject {
             let (data, response) = try await URLSession.shared.data(for: request)
             
             if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
-                print("onboard: HTTP STATUS: \(httpStatus.statusCode)")
+                print("getLandmarks: HTTP STATUS: \(httpStatus.statusCode)")
                 print("Response:")
                 print(response)
                 return

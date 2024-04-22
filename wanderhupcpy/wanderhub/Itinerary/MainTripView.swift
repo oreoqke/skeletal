@@ -105,7 +105,7 @@ class UserItineraryStore :ObservableObject {
             let (data, response) = try await URLSession.shared.data(for: request)
             
             if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
-                print("onboard: HTTP STATUS: \(httpStatus.statusCode)")
+                print("get upcoming trips: HTTP STATUS: \(httpStatus.statusCode)")
                 print("Response:")
                 print(response)
                 return
