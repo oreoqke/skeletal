@@ -173,6 +173,9 @@ class UserItineraryStore :ObservableObject {
     private init() {}
     @Published var itineraries: [Itinerary] = [] // Use @Published here instead of @ObservedObject
     @Published var currentTripID: Int? // Variable to hold the current trip's ID
+    @Published var currentTripName: String? // Variable to hold the current trip's ID
+    @Published var currentTripStartDate: String? // Variable to hold the current trip's ID
+
     @Published var days: Int?
     @State private var itineraryID: Int? = nil
     @State private var startDate: Date? = nil
@@ -227,8 +230,10 @@ class UserItineraryStore :ObservableObject {
                     self.itineraries = decodedLandmarks
                 }
                 // Set the current trip ID to the ID of the first itinerary, if available
-                if let firstItineraryID = decodedLandmarks.first?.id {
-                    self.currentTripID = firstItineraryID
+                if let firstItineraryID = decodedLandmarks.first {
+                    self.currentTripID = firstItineraryID.id
+                    self.currentTripName = firstItineraryID.city_name
+                    self.currentTripStartDate = firstItineraryID.start_date
                 }
                 
             } catch {

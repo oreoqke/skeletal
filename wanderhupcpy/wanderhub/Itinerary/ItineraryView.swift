@@ -113,7 +113,7 @@ struct ItineraryHeaderView: View {
             VStack {
                 
                 // Trip Name
-                Text(self.tripName ?? "No Trip Selected")
+                Text(self.tripName ?? "Current Trip")
                     .multilineTextAlignment(.center)
                     .font(Font.title)
                     .foregroundColor(Color.blue)
