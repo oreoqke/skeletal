@@ -117,10 +117,10 @@ struct HomeView: View {
             GreetUser()
             
             //Search Bar if Needed
-            SearchBarViewControllerRepresentable()
-                .frame(height: 44)
-                .offset(x: 0, y: 30)
-                .padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
+//            SearchBarViewControllerRepresentable()
+//                .frame(height: 44)
+//                .offset(x: 0, y: 30)
+//                .padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
             
             QuickAccess()
             

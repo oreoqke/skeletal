@@ -66,7 +66,7 @@ struct LandmarkView: View {
                 .font(.system(size: 18))
                 .padding()
             Spacer()
-            StarRatingView(landmark: $landmark)
+            //StarRatingView(landmark: $landmark)
                 .padding()
                 .accentColor(.yellow)
         }
@@ -121,32 +121,32 @@ struct LandmarkView: View {
 }
 
 
-struct StarRatingView: View {
-    @Binding var landmark: Landmark // The rating value that the view is bound to
-
-    var maximumRating = 5 // The maximum rating value
-    var offImage: Image? // Image used when the star is not selected
-    var onImage = Image(systemName: "star.fill") // Image used when the star is selected
-    var offColor = Color.gray // Color used when the star is not selected
-    var onColor = Color.yellow // Color used when the star is selected
-
-    var body: some View {
-        HStack {
-            ForEach(1...maximumRating, id: \.self) { number in
-                image(for: number)
-                    .foregroundColor(number > landmark.rating ? offColor : onColor)
-                    .onTapGesture {
-                        landmark.rating = number
-                    }
-            }
-        }
-    }
-
-    private func image(for number: Int) -> Image {
-        if number > landmark.rating {
-            return offImage ?? onImage
-        } else {
-            return onImage
-        }
-    }
-}
+//struct StarRatingView: View {
+//    @Binding var landmark: Landmark // The rating value that the view is bound to
+//
+//    var maximumRating = 5 // The maximum rating value
+//    var offImage: Image? // Image used when the star is not selected
+//    var onImage = Image(systemName: "star.fill") // Image used when the star is selected
+//    var offColor = Color.gray // Color used when the star is not selected
+//    var onColor = Color.yellow // Color used when the star is selected
+//
+//    var body: some View {
+//        HStack {
+//            ForEach(1...maximumRating, id: \.self) { number in
+//                image(for: number)
+//                    .foregroundColor(number > landmark.rating ? offColor : onColor)
+//                    .onTapGesture {
+//                        landmark.rating = number
+//                    }
+//            }
+//        }
+//    }
+//
+//    private func image(for number: Int) -> Image {
+//        if number > landmark.rating {
+//            return offImage ?? onImage
+//        } else {
+//            return onImage
+//        }
+//    }
+//}
