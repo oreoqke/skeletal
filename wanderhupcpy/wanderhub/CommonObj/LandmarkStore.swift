@@ -21,7 +21,11 @@ final class LandmarkStore: ObservableObject {
 
     // private constructor (we don't actually want instances of this since dummy data)
     private init() {
-        
+        Task {
+            await getNearest()
+            // fix this later
+            await getLandmarks(ItinId: 1)
+        }
 //        self.landmarks.append(contentsOf: [
 //            
 //            // Bell Tower
@@ -221,6 +225,7 @@ final class LandmarkStore: ObservableObject {
             return
         }
         guard let token = UserDefaults.standard.string(forKey: "usertoken") else {
+            print("no token found in memory")
             return
         }
         
@@ -231,6 +236,7 @@ final class LandmarkStore: ObservableObject {
         request.httpMethod = "GET"
         
         do {
+            print(request)
             let (data, response) = try await URLSession.shared.data(for: request)
             
             if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {

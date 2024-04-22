@@ -40,6 +40,13 @@ struct MapView: View {
                     }
                     .annotationTitles(.hidden)
                 }
+                ForEach(LandmarkStore.shared.nearest, id: \.self) { landmark in
+                    if let geodata = landmark.geodata {
+                        Marker(landmark.name!, systemImage: "questionmark.circle.fill",
+                               coordinate: CLLocationCoordinate2D(latitude: geodata.lat, longitude: geodata.lon))
+                            .tint(.mint)
+                    }
+                }
                 
                 UserAnnotation() // shows user location
             }
@@ -47,6 +54,11 @@ struct MapView: View {
                 MapUserLocationButton()
                 MapCompass()
                 MapScaleView()
+            }
+        }
+        .onAppear {
+            Task {
+                await LandmarkStore.shared.getNearest()
             }
         }
         Spacer()
