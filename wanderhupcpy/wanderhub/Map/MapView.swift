@@ -11,9 +11,8 @@ import MapKit
 struct MapView: View {
     @ObservedObject var viewModel: NavigationControllerViewModel
     @Binding var cameraPosition: MapCameraPosition
-    let landmark: newLandmark?
+    @State var landmark: newLandmark?
     @State var selected: newLandmark?
-    
     
     @ObservedObject var userItineraryStore = UserItineraryStore.shared
     

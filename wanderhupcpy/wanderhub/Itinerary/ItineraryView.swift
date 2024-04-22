@@ -224,6 +224,10 @@ struct ItinerarySingleEntryExpandedView: View {
    // @StateObject var itineraryEntries = UserItineraryStore.shared
     @StateObject var itineraryEntries = LandmarkStore.shared
     
+    @State var userItineraryStore = UserItineraryStore.shared
+    @State var landmarks: [newLandmark]
+    @State var itinerary_id: Int
+    
     var body: some View {
         VStack {
             HStack {
@@ -258,7 +262,7 @@ struct ItinerarySingleEntryExpandedView: View {
             
             HStack {
                 Button(action: {
-                    viewModel.itineraryDirectNavigation(landmark: landmark)
+                    viewModel.itineraryDirectNavigation(selected: landmark)
                 }) {
                     Text("View on Map")
                         .font(Font.body)
@@ -273,10 +277,9 @@ struct ItinerarySingleEntryExpandedView: View {
                 Button(action: {
                     Task{
                         await itineraryEntries.removeLandmark(landmark: landmark)
-                        let itineraryView = ItineraryView( viewModel: viewModel, itineraryID: it_id)
-                        await itineraryView.refreshData()
-                        refreshView() // Call refreshView after deleting the landmark
-
+                        await userItineraryStore.getTripDetails(itineraryID: self.itinerary_id)
+                        self.landmarks = userItineraryStore.newLandmarks
+                        
                     }
                 }) {
                     Text("Delete")
@@ -413,8 +416,6 @@ struct ItineraryView: View {
     @ObservedObject var userItineraryStore = UserItineraryStore.shared
     @State var it_name: String?
     @State var date: String?
-    
-    
 
     // moving a landmark around
     @State var draggedLandmark: newLandmark?
@@ -427,8 +428,7 @@ struct ItineraryView: View {
     @State var newDescription: String = ""
     
     @State var landmarks: [newLandmark] = []
-    
-    
+     
     var body: some View {
         
         VStack {
@@ -470,7 +470,8 @@ struct ItineraryView: View {
                     ForEach(landmarks, id: \.it_id) {item in
                         Group{
                             if (self.expandedLandmark?.it_id == item.it_id) {
-                                ItinerarySingleEntryExpandedView(landmark: item, it_id: itineraryID, viewModel: viewModel)
+                                ItinerarySingleEntryExpandedView(landmark: item, viewModel: viewModel, landmarks: self.landmarks, itinerary_id: self.itineraryID)
+//                                ItinerarySingleEntryExpandedView(landmark: item, viewModel: viewModel)
                             } else {
                                 ItinerarySingleEntryView(landmark: item)
                             }

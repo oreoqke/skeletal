@@ -20,8 +20,8 @@ class NavigationControllerViewModel: ObservableObject {
     // To go to booking from the suggested destinations
     @Published var NavigatingToBooking = false
     
-    func itineraryDirectNavigation(landmark: newLandmark?) {
-        viewState = .map(landmark)
+    func itineraryDirectNavigation(selected: newLandmark?) {
+        viewState = .map(selected)
     }
     
 }
@@ -80,7 +80,7 @@ struct MainNavController: View {
             .fullScreenCover(isPresented: $viewModel.isPresented) {
                 switch viewModel.viewState {
                 case .map(let selectedLandmark):
-                    MapView(viewModel: viewModel, cameraPosition: $viewModel.cameraPosition, landmark: selectedLandmark)
+                    MapView(viewModel: viewModel, cameraPosition: $viewModel.cameraPosition, landmark: nil, selected: selectedLandmark)
                 case .home:
                     HomeView()
                 case .itinerary:
