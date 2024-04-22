@@ -102,7 +102,7 @@ struct MainTripView: View {
                 }
             }
             .background(backCol)
-            .padding()
+            //.padding()
             
             Spacer()
             ChildNavController(viewModel: viewModel)
@@ -240,13 +240,13 @@ class UserItineraryStore :ObservableObject {
         
     }
     
-    func removeLandmark(id: Int) async {
-        await MainActor.run {
-            newLandmarks.removeAll { $0.id == id }
-            
-            // need to implement delete request for the itinerary
-        }
-    }
+//    func removeLandmark(id: Int) async {
+//        await MainActor.run {
+//            newLandmarks.removeAll { $0.id == id }
+//            
+//            // need to implement delete request for the itinerary
+//        }
+//    }
     
     func getTripDetails(itineraryID: Int) async {
         

@@ -25,6 +25,7 @@ struct LandmarkResponse: Decodable {
 final class LandmarkStore: ObservableObject {
     static let shared = LandmarkStore() // create one instance of the class to be shared
     
+   // @ObservedObject var userItineraryStore = UserItineraryStore.shared
     // this is for the nearest locations
     @Published var nearest = [NearestLandmark]()
     
@@ -36,7 +37,7 @@ final class LandmarkStore: ObservableObject {
         Task {
             await getNearest()
             // fix this later
-            await getLandmarks(day: 1)
+        //    await getLandmarks(day: 1)
         }
    }
     
@@ -46,17 +47,18 @@ final class LandmarkStore: ObservableObject {
 //    private let serverUrl = "https://3.22.222.79/"
     
     // TODO: ADD AUTHORIZATION. USE WanderHubID.shared.id TO SEND REQUEST TO BACKEND
-    func removeLandmark(id: String) async {
+    func removeLandmark(landmark: newLandmark) async {
         
         // TODO: Call backend to remove the landmark from the itinerary
         
-        landmarks.removeAll{ $0.id == id }
+        landmarks.removeAll{ String($0.id) == String(landmark.it_id) }
         
-        guard let jsonData = try? JSONSerialization.data(withJSONObject: id) else {
+        let jsonObj = ["id": landmark.it_id]
+        print(jsonObj)
+        guard let jsonData = try? JSONSerialization.data(withJSONObject: jsonObj) else {
             print("addUser: jsonData serialization error")
             return
         }
-
         guard let token = UserDefaults.standard.string(forKey: "usertoken") else {
             return
         }
@@ -64,12 +66,12 @@ final class LandmarkStore: ObservableObject {
             print("remove landmarks: bad URL")
             return
         }
+        
         var request = URLRequest(url: apiUrl)
         request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Accept") // expect response in JSON
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpMethod = "DELETE"
         request.setValue("Token \(token)", forHTTPHeaderField: "Authorization")
-
+        request.httpMethod = "DELETE"
         request.httpBody = jsonData
         
         do {
@@ -83,6 +85,7 @@ final class LandmarkStore: ObservableObject {
             }
             print("Response:")
             print(response)
+            
 
         } catch {
             print("Error: \(error.localizedDescription)")
@@ -90,6 +93,10 @@ final class LandmarkStore: ObservableObject {
         }
 
     }
+    
+    
+    
+    
     
     func submitRating(rating: Int, id: String) async {
         var landmark2Rate = landmarks.first { $0.id == id }
@@ -211,98 +218,98 @@ final class LandmarkStore: ObservableObject {
         
     }
     
-    func getLandmarksDay(day: Int?) async {
-        await getLandmarks(day: 1)
-    }
+//    func getLandmarksDay(day: Int?) async {
+//        await getLandmarks(day: 1)
+//    }
 
-    func getLandmarks(day: Int?) async {
-        guard let apiUrl = URL(string: "\(serverUrl)get_landmarks/") else {
-            print("addUser: Bad URL")
-            return
-        }
-        guard let token = UserDefaults.standard.string(forKey: "usertoken") else {
-            print("no token found in memory")
-            return
-        }
-        
-        var request = URLRequest(url: apiUrl)
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Accept") // expect response in JSON
-        request.setValue("Token \(token)", forHTTPHeaderField: "Authorization")
-        request.httpMethod = "GET"
-        
-        do {
-            
-            let (data, response) = try await URLSession.shared.data(for: request)
-            
-            if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
-                print("getLandmarks: HTTP STATUS: \(httpStatus.statusCode)")
-                print("Response:")
-                print(response)
-                return
-            }
-            print("Response:")
-            print(response)
-
-        } catch {
-            print("Error: \(error.localizedDescription)")
-            return
-        }
-
-
-
-        return
-        
-        //        guard let apiUrl = URL(string: "\(serverUrl)getmaps/") else {
-        //            print("getChatts: Bad URL")
-        //            return
-        //        }
-        //
-        //        var request = URLRequest(url: apiUrl)
-        //        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Accept") // expect response in JSON
-        //        request.httpMethod = "GET"
-        //
-        //        URLSession.shared.dataTask(with: request) { data, response, error in
-        //            guard let data = data, error == nil else {
-        //                print("getChatts: NETWORKING ERROR")
-        //                return
-        //            }
-        //            if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
-        //                print("getChatts: HTTP STATUS: \(httpStatus.statusCode)")
-        //                return
-        //            }
-        //
-        //            guard let jsonObj = try? JSONSerialization.jsonObject(with: data) as? [String:Any] else {
-        //                print("getChatts: failed JSON deserialization")
-        //                return
-        //            }
-        //            let chattsReceived = jsonObj["chatts"] as? [[String?]] ?? []
-        //
-        //            DispatchQueue.main.async {
-        //                self.chatts = [Chatt]()
-        //                for chattEntry in chattsReceived {
-        //                    if chattEntry.count == self.nFields {
-        //                        let geoArr = chattEntry[3]?.data(using: .utf8).flatMap {
-        //                            try? JSONSerialization.jsonObject(with: $0) as? [Any]
-        //                        }
-        //                        self.chatts.append(Chatt(username: chattEntry[0],
-        //                                                message: chattEntry[1],
-        //                                                timestamp: chattEntry[2],
-        //                                                 geodata: geoArr.map {
-        //                                                    GeoData(lat: $0[0] as! Double,
-        //                                                            lon: $0[1] as! Double,
-        //                                                            place: $0[2] as! String,
-        //                                                            facing: $0[3] as! String,
-        //                                                            speed: $0[4] as! String)
-        //                                                 }
-        //                        ))
-        //                    } else {
-        //                        print("getChatts: Received unexpected number of fields: \(chattEntry.count) instead of \(self.nFields).")
-        //                    }
-        //                }
-        //            }
-        //        }.resume()
-    }
+//    func getLandmarks(day: Int?) async {
+//        guard let apiUrl = URL(string: "\(serverUrl)get_landmarks/") else {
+//            print("addUser: Bad URL")
+//            return
+//        }
+//        guard let token = UserDefaults.standard.string(forKey: "usertoken") else {
+//            print("no token found in memory")
+//            return
+//        }
+//        
+//        var request = URLRequest(url: apiUrl)
+//        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+//        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Accept") // expect response in JSON
+//        request.setValue("Token \(token)", forHTTPHeaderField: "Authorization")
+//        request.httpMethod = "GET"
+//        
+//        do {
+//            
+//            let (data, response) = try await URLSession.shared.data(for: request)
+//            
+//            if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
+//                print("getLandmarks: HTTP STATUS: \(httpStatus.statusCode)")
+//                print("Response:")
+//                print(response)
+//                return
+//            }
+//            print("Response:")
+//            print(response)
+//
+//        } catch {
+//            print("Error: \(error.localizedDescription)")
+//            return
+//        }
+//
+//
+//
+//        return
+//        
+//        //        guard let apiUrl = URL(string: "\(serverUrl)getmaps/") else {
+//        //            print("getChatts: Bad URL")
+//        //            return
+//        //        }
+//        //
+//        //        var request = URLRequest(url: apiUrl)
+//        //        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Accept") // expect response in JSON
+//        //        request.httpMethod = "GET"
+//        //
+//        //        URLSession.shared.dataTask(with: request) { data, response, error in
+//        //            guard let data = data, error == nil else {
+//        //                print("getChatts: NETWORKING ERROR")
+//        //                return
+//        //            }
+//        //            if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
+//        //                print("getChatts: HTTP STATUS: \(httpStatus.statusCode)")
+//        //                return
+//        //            }
+//        //
+//        //            guard let jsonObj = try? JSONSerialization.jsonObject(with: data) as? [String:Any] else {
+//        //                print("getChatts: failed JSON deserialization")
+//        //                return
+//        //            }
+//        //            let chattsReceived = jsonObj["chatts"] as? [[String?]] ?? []
+//        //
+//        //            DispatchQueue.main.async {
+//        //                self.chatts = [Chatt]()
+//        //                for chattEntry in chattsReceived {
+//        //                    if chattEntry.count == self.nFields {
+//        //                        let geoArr = chattEntry[3]?.data(using: .utf8).flatMap {
+//        //                            try? JSONSerialization.jsonObject(with: $0) as? [Any]
+//        //                        }
+//        //                        self.chatts.append(Chatt(username: chattEntry[0],
+//        //                                                message: chattEntry[1],
+//        //                                                timestamp: chattEntry[2],
+//        //                                                 geodata: geoArr.map {
+//        //                                                    GeoData(lat: $0[0] as! Double,
+//        //                                                            lon: $0[1] as! Double,
+//        //                                                            place: $0[2] as! String,
+//        //                                                            facing: $0[3] as! String,
+//        //                                                            speed: $0[4] as! String)
+//        //                                                 }
+//        //                        ))
+//        //                    } else {
+//        //                        print("getChatts: Received unexpected number of fields: \(chattEntry.count) instead of \(self.nFields).")
+//        //                    }
+//        //                }
+//        //            }
+//        //        }.resume()
+//    }
     
     
     // TODO: ADD AUTHORIZATION. USE WanderHubID.shared.id TO SEND REQUEST TO BACKEND

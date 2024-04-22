@@ -197,7 +197,8 @@ struct ItinerarySingleEntryView: View {
 //                        .foregroundColor(Color.blue)
 //                }
             }
-            Text("Your Rating:")
+           // Text("", text: Binding (get: {landmark.trip_day}, set: { _ in}))
+            Text("Day: \(landmark.trip_day)")
                 .font(.system(size: 15))
                 .foregroundColor(Color(red: 0.7, green: 0.7, blue: 0.7, opacity: 1))
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -217,8 +218,8 @@ struct ItinerarySingleEntryExpandedView: View {
     @State var landmark: newLandmark
     
     @ObservedObject var viewModel: NavigationControllerViewModel
-    @StateObject var itineraryEntries = UserItineraryStore.shared
-    //@StateObject var itineraryEntries = LandmarkStore.shared
+   // @StateObject var itineraryEntries = UserItineraryStore.shared
+    @StateObject var itineraryEntries = LandmarkStore.shared
     
     var body: some View {
         VStack {
@@ -268,7 +269,7 @@ struct ItinerarySingleEntryExpandedView: View {
                 
                 Button(action: {
                     Task{
-                     await itineraryEntries.removeLandmark(id: landmark.it_id)
+                        await itineraryEntries.removeLandmark(landmark: landmark)
                     }
                 }) {
                     Text("Delete")

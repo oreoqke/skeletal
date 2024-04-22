@@ -103,7 +103,7 @@ struct LandmarkView: View {
             
             Button(action: {
                 Task {
-                    await itineraryEntries.removeLandmark(id: landmark.id)
+                 //   await itineraryEntries.removeLandmark(landmark: landmark)
                     presentationMode.wrappedValue.dismiss()
                 }
             }) {
