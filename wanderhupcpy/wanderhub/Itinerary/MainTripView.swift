@@ -159,7 +159,7 @@ class UserItineraryStore :ObservableObject {
                 return
             }
             
-            print("get upcoming trips::")
+            print("get nearby  trips::")
             //            guard let jsonObj = try? JSONSerialization.jsonObject(with: data) as? [String:Any] else {
             //                print("addUser: failed JSON deserialization")
             //                return

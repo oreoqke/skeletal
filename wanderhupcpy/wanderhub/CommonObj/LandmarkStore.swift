@@ -9,10 +9,10 @@ import Foundation
 import Observation
 
 struct NearestLandmark: Decodable {
-    var distance: String
+    var distance: Double
     var landmark: String
-    var latitude: String
-    var longitude: String
+    var latitude: Double
+    var longitude: Double
     var tags: [String]
 }
 
@@ -183,11 +183,7 @@ final class LandmarkStore: ObservableObject {
         guard let token = UserDefaults.standard.string(forKey: "usertoken") else {
             return
         }
-        print(token)
-        guard let apiUrl = URL(string: "\(serverUrl)get-nearby-landmarks/") else {
-            print("get nearby landmarks: bad url")
-            return
-        }
+       
         var request = URLRequest(url: apiUrl)
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Accept") // expect response in JSON
@@ -197,37 +193,13 @@ final class LandmarkStore: ObservableObject {
 
         
         do {
-//            print(request)
-//            let (data, response) = try await URLSession.shared.data(for: request)
-//            
-//            if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
-//                print("onboard: HTTP STATUS: \(httpStatus.statusCode)")
-//                print("Response:")
-//                print(response)
-//                return
-//            }
-//            print("Response:")
-//            print(response)
-            
-            let (data, response) = try await URLSession.shared.data(for: request)
-            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
-                // Log the JSON response to debug
-                let jsonString = String(data: data, encoding: .utf8) ?? "Invalid JSON encoding"
-                print(jsonString)
-                
-                let jsonData = jsonString.data(using: .utf8)!
-                
-                let decoder = JSONDecoder()
-                let landmarkresponse = try decoder.decode(LandmarkResponse.self, from: jsonData)
-                let landmarks = landmarkresponse.landmarks.sorted { $0.distance < $1.distance }
-                // Output the sorted landmarks
-                for landmark in landmarks {
-                    print("\(landmark.landmark) - Distance: \(landmark.distance)")
-                }
 
-                // Proceed with JSON decoding
-            } else {
-                print("HTTP Error: \(response)")
+            let (data, response) = try await URLSession.shared.data(for: request)
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
+                print("submit rating: HTTP STATUS: \(httpResponse.statusCode)")
+                print("Response:")
+                print(response)
+                return
             }
 
         } catch {
@@ -240,6 +212,68 @@ final class LandmarkStore: ObservableObject {
     }
     
     func getNearest() async {
+        
+        guard let token = UserDefaults.standard.string(forKey: "usertoken") else {
+            return
+        }
+        print(token)
+        guard let apiUrl = URL(string: "\(serverUrl)get-nearby-landmarks/") else {
+            print("get nearby landmarks: bad url")
+            return
+        }
+        
+        
+        var request = URLRequest(url: apiUrl)
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Accept") // expect response in JSON
+        request.setValue("Token \(token)", forHTTPHeaderField: "Authorization")
+        request.httpMethod = "POST"
+        
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            
+            if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
+                print("get upcoming trips: HTTP STATUS: \(httpStatus.statusCode)")
+                print("Response:")
+                print(response)
+                return
+            }
+            
+            print("get nearby  trips::")
+            //            guard let jsonObj = try? JSONSerialization.jsonObject(with: data) as? [String:Any] else {
+            //                print("addUser: failed JSON deserialization")
+            //                return
+            //            }
+            let decoder = JSONDecoder()
+            do {
+                guard let jsonObject = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+                      let landmarksArray = jsonObject["landmarks"] as? [[String: Any]] else {
+                    print("Failed to parse JSON data")
+                    return
+                }
+                print(landmarksArray)
+                
+                let decodedLandmarks = try landmarksArray.map { landmarkDict in
+                    return try JSONDecoder().decode(NearestLandmark.self, from: JSONSerialization.data(withJSONObject: landmarkDict))
+                }
+                print(decodedLandmarks)
+                
+                DispatchQueue.main.async {
+                    self.nearest = decodedLandmarks
+                }
+                print(self.nearest)
+                
+            } catch {
+                print("Error decoding JSON: \(error)")
+            }
+            
+        } catch {
+            print("Error: \(error.localizedDescription)")
+            return
+        }
+        
+        
+        return
         
         
     }
