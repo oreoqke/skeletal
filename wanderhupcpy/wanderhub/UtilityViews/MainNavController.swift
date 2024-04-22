@@ -20,7 +20,7 @@ class NavigationControllerViewModel: ObservableObject {
     // To go to booking from the suggested destinations
     @Published var NavigatingToBooking = false
     
-    func itineraryDirectNavigation(landmark: Landmark) {
+    func itineraryDirectNavigation(landmark: newLandmark?) {
         viewState = .map(landmark)
     }
     

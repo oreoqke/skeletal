@@ -65,7 +65,7 @@ class Destinations: ObservableObject {
                     print("Failed to parse JSON data")
                     return
                 }
-                print(landmarksArray)
+                //print(landmarksArray)
                 
                 let decodedLandmarks = try landmarksArray.map { landmarkDict in
                     return try JSONDecoder().decode(Destination.self, from: JSONSerialization.data(withJSONObject: landmarkDict))
@@ -213,32 +213,32 @@ struct HomeView: View {
     @ViewBuilder
     private func QuickAccess() -> some View {
         HStack(spacing: 23) {
-            ZStack() {
-                Rectangle()
-                    .foregroundColor(.clear)
-                    .frame(width: 166, height: 84)
-                    .background(Color(red: 1, green: 0.83, blue: 0.51))
-                    .cornerRadius(10)
-                    .offset(x: 0, y: 0)
-
-                NavigationLink(destination: ItineraryView(viewModel: viewmodel, itineraryID: userItineraryStore.currentTripID ?? 0)) {
-                    Text("Go to current trip")
-                        .font(Font.custom("Poppins", size: 16).weight(.medium))
-                        .foregroundColor(Color(red: 0.96, green: 0.40, blue: 0.33))
-                }
-                
-                // Switch it if
-                //                Button(action: {
-                //                    viewmodel.viewState = ViewState.itinerary
-                //                    viewmodel.isPresented = true
-                //                    viewmodel.NavigatingToCurrentTrip = true
-                //                }) {
-                //                    Text("Go to current trip")
-                //                        .font(Font.custom("Poppins", size: 16).weight(.medium))
-                //                        .foregroundColor(Color(red: 0.96, green: 0.40, blue: 0.33))
-                //
-                //                }
-            }
+//            ZStack() {
+//                Rectangle()
+//                    .foregroundColor(.clear)
+//                    .frame(width: 166, height: 84)
+//                    .background(Color(red: 1, green: 0.83, blue: 0.51))
+//                    .cornerRadius(10)
+//                    .offset(x: 0, y: 0)
+//
+//                NavigationLink(destination: ItineraryView(viewModel: viewmodel, itineraryID: userItineraryStore.currentTripID ?? 0)) {
+//                    Text("Go to current trip")
+//                        .font(Font.custom("Poppins", size: 16).weight(.medium))
+//                        .foregroundColor(Color(red: 0.96, green: 0.40, blue: 0.33))
+//                }
+//                
+//                // Switch it if
+//                //                Button(action: {
+//                //                    viewmodel.viewState = ViewState.itinerary
+//                //                    viewmodel.isPresented = true
+//                //                    viewmodel.NavigatingToCurrentTrip = true
+//                //                }) {
+//                //                    Text("Go to current trip")
+//                //                        .font(Font.custom("Poppins", size: 16).weight(.medium))
+//                //                        .foregroundColor(Color(red: 0.96, green: 0.40, blue: 0.33))
+//                //
+//                //                }
+//            }
             
             ZStack() {
                 Rectangle()

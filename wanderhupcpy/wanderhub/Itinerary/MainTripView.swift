@@ -18,6 +18,11 @@ struct Itinerary: Decodable {
 struct MainTripView: View {
     @ObservedObject var viewModel: NavigationControllerViewModel
     @ObservedObject var userItineraryStore = UserItineraryStore.shared // Observe the UserItineraryStore
+    
+    @State var current_it_name: String?
+    @State var is_itin_active = false
+    
+    
     var body: some View {
         NavigationStack{
             VStack {
@@ -33,10 +38,10 @@ struct MainTripView: View {
                         OptionCardView(optionTitle: "Start New Trip", iconName: "plus.circle.fill", backgroundColor: Color.blue)
                     }
                     .background(backCol)
-                    NavigationLink(destination: ItineraryView(viewModel: viewModel, itineraryID: userItineraryStore.currentTripID ?? 0)) {
-                        OptionCardView(optionTitle: "Current Itinerary", iconName: "list.bullet", backgroundColor: Color.green)
-                    }
-                    .background(backCol)
+//                    NavigationLink(destination: ItineraryView(viewModel: viewModel, itineraryID: userItineraryStore.currentTripID ?? 0, it_name: <#T##Binding<String>#>)) {
+//                        OptionCardView(optionTitle: "Current Itinerary", iconName: "list.bullet", backgroundColor: Color.green)
+//                    }
+//                    .background(backCol)
                     HStack {
                         Text("Upcoming Trips:")
                             .font(.title2)
@@ -58,31 +63,25 @@ struct MainTripView: View {
                     
                     ScrollView(showsIndicators: false) {
                         ForEach(userItineraryStore.itineraries, id: \.id) { itinerary in
-                            NavigationLink(destination: ItineraryView(viewModel: viewModel, itineraryID: itinerary.id)){
-                                HStack{
-                                    Button(action: {
-                                        Task {
-                                            await userItineraryStore.getTripDetails(itineraryID: itinerary.id)
-                                        }
-                                    }) {
+                            NavigationLink(destination: ItineraryView(viewModel: viewModel, itineraryID: itinerary.id, it_name: itinerary.it_name, date: itinerary.start_date),
+                                label: {
+                                    HStack{
                                         VStack(alignment: .leading) {
                                             Text(itinerary.it_name)
                                                 .font(.headline)
                                             Text("\(itinerary.city_name), \(itinerary.start_date)")
                                                 .font(.subheadline)
                                         }
+                                        
                                     }
-
-                                    
-                                }
-                                .padding(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
-                                .frame(width: 370, height: 96)
-                                .background(Color(red: 0.94, green: 0.92, blue: 0.87))
-                                .cornerRadius(8)
-                                .shadow(
-                                    color: Color(red: 0.71, green: 0.74, blue: 0.79, opacity: 0.12), radius: 16, y: 6
-                                )
-                            }
+                                    .padding(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+                                    .frame(width: 370, height: 96)
+                                    .background(Color(red: 0.94, green: 0.92, blue: 0.87))
+                                    .cornerRadius(8)
+                                    .shadow(
+                                        color: Color(red: 0.71, green: 0.74, blue: 0.79, opacity: 0.12), radius: 16, y: 6
+                                    )
+                            })
 //                            .onAppear {
 //                                Task {
 //                                    await userItineraryStore.getTripDetails(itineraryID: itinerary.id)
@@ -109,9 +108,9 @@ struct MainTripView: View {
             ChildNavController(viewModel: viewModel)
         }
         .background(backCol)
-        .navigationDestination(isPresented: $viewModel.NavigatingToCurrentTrip) {
-            ItineraryView(viewModel: viewModel, itineraryID: userItineraryStore.currentTripID ?? 0)
-        }
+//        .navigationDestination(isPresented: $viewModel.NavigatingToCurrentTrip) {
+//            ItineraryView(viewModel: viewModel, itineraryID: userItineraryStore.currentTripID ?? 0)
+//        }
         
     }
 }
@@ -150,7 +149,21 @@ struct OptionCardView: View {
     }
 }
 
+struct newLandmark: Identifiable, Hashable, Decodable {
+    var it_id: Int
+    var landmark_name: String
+    var latitude: Double
+    var longitude: Double
+    var trip_day: Int
+        
+    var id: Int { it_id }
+    
+    //var favorite: Bool = false
+}
 
+struct newLandmarkResponse: Decodable {
+    var newLandmarks: [newLandmark]
+}
 
 class UserItineraryStore :ObservableObject {
     
@@ -158,6 +171,9 @@ class UserItineraryStore :ObservableObject {
     private init() {}
     @Published var itineraries: [Itinerary] = [] // Use @Published here instead of @ObservedObject
     @Published var currentTripID: Int? // Variable to hold the current trip's ID
+    @Published var days: Int?
+    
+    @Published var newLandmarks = [newLandmark]()
     
     func getUpcomingTrips() async {
         
@@ -196,7 +212,7 @@ class UserItineraryStore :ObservableObject {
                     print("Failed to parse JSON data")
                     return
                 }
-                print(landmarksArray)
+                //print(landmarksArray)
                 
                 let decodedLandmarks = try landmarksArray.map { landmarkDict in
                     return try JSONDecoder().decode(Itinerary.self, from: JSONSerialization.data(withJSONObject: landmarkDict))
@@ -222,6 +238,14 @@ class UserItineraryStore :ObservableObject {
         
         return
         
+    }
+    
+    func removeLandmark(id: Int) async {
+        await MainActor.run {
+            newLandmarks.removeAll { $0.id == id }
+            
+            // need to implement delete request for the itinerary
+        }
     }
     
     func getTripDetails(itineraryID: Int) async {
@@ -252,21 +276,35 @@ class UserItineraryStore :ObservableObject {
             let (data, response) = try await URLSession.shared.data(for: request)
             
             if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
-                print("get upcoming trips: HTTP STATUS: \(httpStatus.statusCode)")
-                print("Response:")
-                print(response)
+                print("HTTP STATUS: \(httpStatus.statusCode)")
                 return
             }
-            print("get trip details::")
-            guard let jsonObj = try? JSONSerialization.jsonObject(with: data) as? [String:Any] else {
-                print("addUser: failed JSON deserialization")
-                return
+            
+            // Debugging
+            if let jsonString = String(data: data, encoding: .utf8) {
+                //print("JSON String:\n\(jsonString)")
             }
-            print(jsonObj)
+            
+            let decoder = JSONDecoder()
+            
+            if let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+               let landmarksArray = jsonObject["items"] as? [[String: Any]] { // Use the key that actually contains your landmarks data
+                let decodedLandmarks = try landmarksArray.map { landmarkDict -> newLandmark in
+                    let landmarkData = try JSONSerialization.data(withJSONObject: landmarkDict)
+                    return try decoder.decode(newLandmark.self, from: landmarkData)
+                }
+                DispatchQueue.main.async {
+                    self.newLandmarks = decodedLandmarks
+                    
+                    //Print the new landmarks array if needed
+                    //print(self.newLandmarks)
+                }
+            } else {
+                print("Failed to parse JSON data")
+            }
             
         } catch {
-            print("Error: \(error.localizedDescription)")
-            return
+            print("Request failed with error: \(error)")
         }
         
         

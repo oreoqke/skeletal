@@ -89,7 +89,7 @@ struct LandmarkView: View {
     private func ActionButtons() -> some View {
         HStack{
             Button(action: {
-                viewModel.itineraryDirectNavigation(landmark: landmark)
+                //viewModel.itineraryDirectNavigation(landmark: landmark)
             }) {
                 Text("View on Map")
                     .font(Font.body)
