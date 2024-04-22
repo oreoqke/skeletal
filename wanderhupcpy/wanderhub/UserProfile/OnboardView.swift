@@ -101,15 +101,14 @@ struct Onboard: View {
             print("addUser: jsonData serialization error")
             return
         }
-        guard let apiUrl = URL(string: "\(serverUrl)initialize_user_preferences/") else { // TODO REPLACE URL
+        guard let apiUrl = URL(string: "\(serverUrl)initialize-user-preferences/") else { // TODO REPLACE URL
             print("addUser: Bad URL")
             return
         }
-//        guard let token = UserDefaults.standard.string(forKey: "usertoken") else {
-//            return
-//        }
-        let token = "434acab1351f3aff0fdea39b0db4a56c29224ac3"
-        //FIXME: CHANGE THIS, THIS IS ONLY FOR TESTING TOKEN IS FOR ONBOARD_PLEASE
+        guard let token = UserDefaults.standard.string(forKey: "usertoken") else {
+            return
+        }
+
         
         var request = URLRequest(url: apiUrl)
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
