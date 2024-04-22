@@ -139,6 +139,10 @@ struct StarRatingView: View {
 
     var body: some View {
         HStack {
+            Text("Rate me ")
+                .foregroundColor(.blue)
+                .padding(.top, 4)
+            
             ForEach(1...5, id: \.self) { star in
                 Image(systemName: star <= rating ? "star.fill" : "star")
                     .foregroundColor(star <= rating ? .yellow : .gray)
@@ -189,21 +193,21 @@ struct LandmarkListRow: View {
                 StarRatingView(rating: $tempRating)
                     .frame(width: 100, height: 20)
                 
-                Button(action: {
-                    print("Rating submitted: \(tempRating)")
-                    Task {
-                        await submitRating(id: visit.landmark_name, newRating: tempRating)
-                    }
-                }) {
-                    Text("Submit Rating")
-                        .foregroundColor(.blue)
-                        .padding(.top, 4)
-                }
+//                Button(action: {
+//                    print("Rating submitted: \(tempRating)")
+//                    Task {
+//                        await submitRating(id: visit.landmark_name, newRating: tempRating)
+//                    }
+//                }) {
+//                    Text("Submit Rating")
+//                        .foregroundColor(.blue)
+//                        .padding(.top, 4)
+//                }
             }
             Spacer()
         }
-        .padding(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
-        .frame(width: 370, height: 220) // Adjusted for additional content
+       // .padding(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+        .frame(width: 370, height: 150) // Adjusted for additional content
         .background(Color(red: 0.94, green: 0.92, blue: 0.87))
         .cornerRadius(8)
         .shadow(
@@ -259,7 +263,7 @@ struct LandmarkListRow: View {
             print("Error: \(error.localizedDescription)")
             return
         }
-        reloadID = UUID()
+       // reloadID = UUID()
 
         
         

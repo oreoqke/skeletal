@@ -13,6 +13,8 @@ struct Itinerary: Decodable {
     var city_name: String
     var it_name: String
     var start_date: String
+    var end_date: String
+    
 }
 
 struct MainTripView: View {
@@ -172,6 +174,9 @@ class UserItineraryStore :ObservableObject {
     @Published var itineraries: [Itinerary] = [] // Use @Published here instead of @ObservedObject
     @Published var currentTripID: Int? // Variable to hold the current trip's ID
     @Published var days: Int?
+    @State private var itineraryID: Int? = nil
+    @State private var startDate: Date? = nil
+    @State private var endDate: Date? = nil
     
     @Published var newLandmarks = [newLandmark]()
     
@@ -240,6 +245,59 @@ class UserItineraryStore :ObservableObject {
         
     }
     
+    
+    func addLandmarktoItinerary(itineraryID: Int, day: String) async {
+        
+        let jsonObj = ["itinerary_id": itineraryID,
+                       "day": day] as [String : Any]
+        print(jsonObj)
+        guard let jsonData = try? JSONSerialization.data(withJSONObject: jsonObj) else {
+            print("addUser: jsonData serialization error")
+            return
+        }
+        
+        guard let apiUrl = URL(string: "\(serverUrl)add-to-itinerary/") else { // TODO REPLACE URL
+            print("addUser: Bad URL")
+            return
+        }
+        guard let token = UserDefaults.standard.string(forKey: "usertoken") else {
+            return
+        }
+        
+        var request = URLRequest(url: apiUrl)
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Accept") // expect response in JSON
+        request.setValue("Token \(token)", forHTTPHeaderField: "Authorization")
+        request.httpMethod = "POST"
+        request.httpBody = jsonData
+        
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            
+            if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
+                print("get upcoming trips: HTTP STATUS: \(httpStatus.statusCode)")
+                print("Response:")
+                print(response)
+                return
+            }
+            print("Response:")
+            print(response)
+            print("add destination: ")
+          
+            Task {
+                await getTripDetails(itineraryID: itineraryID)
+            }
+            
+        } catch {
+            print("Error: \(error.localizedDescription)")
+            return
+        }
+        
+        
+        return
+        
+    }
+    
 //    func removeLandmark(id: Int) async {
 //        await MainActor.run {
 //            newLandmarks.removeAll { $0.id == id }
@@ -280,28 +338,62 @@ class UserItineraryStore :ObservableObject {
                 return
             }
             
-            // Debugging
-            if let jsonString = String(data: data, encoding: .utf8) {
-                //print("JSON String:\n\(jsonString)")
-            }
+        
             
             let decoder = JSONDecoder()
-            
-            if let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-               let landmarksArray = jsonObject["items"] as? [[String: Any]] { // Use the key that actually contains your landmarks data
+            do {
+                guard let jsonObject = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+                    print("Failed to parse JSON data")
+                    return
+                }
+                print(jsonObject)
+                guard let landmarksArray = jsonObject["itinerary"] as? [String: Any] else {
+                       print("Failed to parse landmarks array from JSON data")
+                       return
+                   }
+                
+                print(landmarksArray)
+                guard let landmarksArray = landmarksArray["items"] as? [[String: Any]] else {
+                       print("Failed to parse landmarks array from JSON data")
+                       return
+                   }
+                
+                
                 let decodedLandmarks = try landmarksArray.map { landmarkDict -> newLandmark in
-                    let landmarkData = try JSONSerialization.data(withJSONObject: landmarkDict)
-                    return try decoder.decode(newLandmark.self, from: landmarkData)
-                }
+                        let landmarkData = try JSONSerialization.data(withJSONObject: landmarkDict)
+                        return try JSONDecoder().decode(newLandmark.self, from: landmarkData)
+                    }
+                
                 DispatchQueue.main.async {
-                    self.newLandmarks = decodedLandmarks
-                    
-                    //Print the new landmarks array if needed
-                    //print(self.newLandmarks)
+                    self.newLandmarks = decodedLandmarks     
                 }
-            } else {
-                print("Failed to parse JSON data")
+                // Set the current trip ID to the ID of the first itinerary, if available
+                if let firstItineraryID = decodedLandmarks.first?.id {
+                    self.currentTripID = firstItineraryID
+                }
+                
+            } catch {
+                print("Error decoding JSON: \(error)")
             }
+//            if let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+//               let landmarksArray = jsonObject["items"] as? [[String: Any]] { // Use the key that actually contains your landmarks data
+//                
+//                }
+//              //  let landmarksArray = jsonObject["i"] as? [[String: Any]]  // Use the key that actually contains your landmarks data
+//              //  let landmarksArray = jsonObject["items"] as? [[String: Any]] // Use the key that actually contains your landmarks data
+//                let landmarksArray = jsonObject["items"] as? [[String: Any]]  // Use the key that actually contains your landmarks data
+//            let decodedLandmarks = try landmarksArray.map { landmarkDict -> newLandmark in
+//                let landmarkData = try JSONSerialization.data(withJSONObject: landmarkDict)
+//                return try decoder.decode(newLandmark.self, from: landmarkData)
+//                DispatchQueue.main.async {
+//                    self.newLandmarks = decodedLandmarks
+//                    
+//                    //Print the new landmarks array if needed
+//                    //print(self.newLandmarks)
+//                }
+//            } else {
+//                print("Failed to parse JSON data")
+//            }
             
         } catch {
             print("Request failed with error: \(error)")

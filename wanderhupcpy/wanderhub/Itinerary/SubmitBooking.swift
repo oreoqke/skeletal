@@ -68,19 +68,13 @@ class TravelBookingService {
                     return
                 }
                 print(jsonObject)
-                guard let tripData = jsonObject["itinerary_id"] as? [[String: Any]] else {
-                    print("Failed to parse JSON data")
-                    return
-                }
-                print(tripData)
-                
-                //                let decodedLandmarks = try landmarksArray.map { landmarkDict in
-                //                    return try JSONDecoder().decode(Destination.self, from: JSONSerialization.data(withJSONObject: landmarkDict))
-                //                }
-                //
-                //                DispatchQueue.main.async {
-                //                    self.destinations = decodedLandmarks
-                //                }
+//                guard let tripData = jsonObject["itinerary_id"] as? [[String: Any]] else {
+//                    print("Failed to parse JSON data")
+//                    return
+//                }
+//                print(tripData)
+//                
+             
                 
             } catch {
                 print("Error decoding JSON: \(error)")

@@ -216,6 +216,9 @@ struct ItinerarySingleEntryExpandedView: View {
     
     //@State var index: Int
     @State var landmark: newLandmark
+    @State var it_id: Int
+    @State private var refreshFlag = UUID()
+
     
     @ObservedObject var viewModel: NavigationControllerViewModel
    // @StateObject var itineraryEntries = UserItineraryStore.shared
@@ -270,6 +273,10 @@ struct ItinerarySingleEntryExpandedView: View {
                 Button(action: {
                     Task{
                         await itineraryEntries.removeLandmark(landmark: landmark)
+                        let itineraryView = ItineraryView( viewModel: viewModel, itineraryID: it_id)
+                        await itineraryView.refreshData()
+                        refreshView() // Call refreshView after deleting the landmark
+
                     }
                 }) {
                     Text("Delete")
@@ -292,13 +299,23 @@ struct ItinerarySingleEntryExpandedView: View {
 //                .foregroundStyle(.white)
 //                .clipShape(Capsule())
             }
+            
+    
+
            
         }
-       
+        .onChange(of: landmark) { _ in
+                    // Force the view to re-render when landmark changes
+                    // This will trigger the body to be recomputed
+                }
+        .id(refreshFlag) // Refresh the view when refreshFlag changes
         .padding()
         .background(Color(red: 0.9, green: 0.9, blue: 0.9, opacity: 1))
         .cornerRadius(8)
     }
+    func refreshView() {
+           refreshFlag = UUID() // Change the value of refreshFlag to force refresh
+       }
 }
 
 //struct DayView: View {
@@ -419,41 +436,41 @@ struct ItineraryView: View {
             ItineraryHeaderView(tripName: $it_name, tripStartDate: $date)
             
             // this is to select days
-//            ScrollView(.horizontal, showsIndicators: false){
-//                HStack{
-//                    Spacer()
-//                    ForEach(days, id: \.self) { day in
-//                        Button(action: {
-//                            print("\(day) was tapped")
-//                            selectedDay = day
-//                        }) {
-//                            Text("\(day)")
-//                                .foregroundColor(.white)
-//                                .padding()
-//                                .background(Color.blue)
-//                                .cornerRadius(10)
-//                        }
-//                        Spacer()
-//                    }
-//                }
-//            }
-//            Spacer()
+            //            ScrollView(.horizontal, showsIndicators: false){
+            //                HStack{
+            //                    Spacer()
+            //                    ForEach(days, id: \.self) { day in
+            //                        Button(action: {
+            //                            print("\(day) was tapped")
+            //                            selectedDay = day
+            //                        }) {
+            //                            Text("\(day)")
+            //                                .foregroundColor(.white)
+            //                                .padding()
+            //                                .background(Color.blue)
+            //                                .cornerRadius(10)
+            //                        }
+            //                        Spacer()
+            //                    }
+            //                }
+            //            }
+            //            Spacer()
             
-//            struct newLandmark: Hashable, Decodable {
-//                var it_id: Int
-//                var landmark_name: String
-//                var latitude: Double
-//                var longitude: Double
-//                var trip_day: Int
-//            }
-
+            //            struct newLandmark: Hashable, Decodable {
+            //                var it_id: Int
+            //                var landmark_name: String
+            //                var latitude: Double
+            //                var longitude: Double
+            //                var trip_day: Int
+            //            }
+            
             //DayView(day: $selectedDay, viewModel: viewModel)
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 5) {
                     ForEach(landmarks, id: \.it_id) {item in
                         Group{
                             if (self.expandedLandmark?.it_id == item.it_id) {
-                                ItinerarySingleEntryExpandedView(landmark: item, viewModel: viewModel)
+                                ItinerarySingleEntryExpandedView(landmark: item, it_id: itineraryID, viewModel: viewModel)
                             } else {
                                 ItinerarySingleEntryView(landmark: item)
                             }
@@ -469,29 +486,47 @@ struct ItineraryView: View {
                                 landmarks: $landmarks,
                                 draggedLandmark: $draggedLandmark
                             ))
-                            .onTapGesture(count: 1) {
-                                self.expandedLandmark = item
-                            }
+                        .onTapGesture(count: 1) {
+                            self.expandedLandmark = item
+                        }
                     }
                 }
             }
-//            Spacer()
-//            Text("Add new destation")
-//                .font(.title)
-//                .fontWeight(.semibold)
-//                .foregroundColor(titleCol)
-//            
-//            TextField("Describe what you want to visit", text: $newDescription)
-//                .autocapitalization(.none)
-//                .foregroundColor(greyCol)
-//                .padding()
-//                .background(
-//                    RoundedRectangle(cornerRadius: 10)
-//                        .stroke(lineWidth: 1)
-//                        .foregroundColor(greyCol)
-//                )
-//                .padding(.horizontal, 40)
+            Spacer()
+            
+            Text("Add new destation")
+                .font(.title)
+                .fontWeight(.semibold)
+                .foregroundColor(titleCol)
+                .cornerRadius(10)
+            
+            HStack{
+            TextField("Which day would you like to add a destination to?", text: $newDescription)
+                .autocapitalization(.none)
+                .foregroundColor(greyCol)
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(lineWidth: 1)
+                        .foregroundColor(greyCol)
+                )
+                .padding(.horizontal, 10)
+                Button(action: {
+                    // Call the function to add landmark to itinerary
+                    Task {
+                        await UserItineraryStore.shared.addLandmarktoItinerary(itineraryID: itineraryID, day: newDescription)
+                        await refreshData()
+
+                    }
+                }) {
+                    Image("arrow_right")
+                        .resizable()
+                        .frame(width: 30, height: 30)
+                      //  .frame(alignment: .trailing)
+                }
         }
+                
+                }
         .onAppear{
             Task {
                 await userItineraryStore.getTripDetails(itineraryID: itineraryID)
@@ -508,4 +543,12 @@ struct ItineraryView: View {
         Spacer()
         ChildNavController(viewModel: viewModel)
     }
+    
+    func refreshData() async {
+        print("refreshing")
+        await userItineraryStore.getTripDetails(itineraryID: itineraryID)
+        landmarks = userItineraryStore.newLandmarks
+    }
+
+    
 }
