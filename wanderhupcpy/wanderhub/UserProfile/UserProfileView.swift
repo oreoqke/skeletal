@@ -136,6 +136,12 @@ struct LandmarkListRow: View {
                 if visit.description != "Unknown" {
                             Text("\(visit.description), \(visit.tags.joined(separator: ", "))")
                 }              
+//                if let visitDate = getDateObject(visit.visit_date, visit.visit_time) {
+//                    let formattedDate = formatDate(visitDate)
+//                    print(formattedDate) // Output: "Apr 20, 2029 4:00 PM"
+//                } else {
+//                    print("Invalid date or time format")
+//                }
                 Text("\(visit.rating)/5, \(visit.visit_time)")
                 
             }
@@ -150,4 +156,19 @@ struct LandmarkListRow: View {
         )
         
     }
+//    
+//    func formatDate(_ String: Date) -> String {
+//        let components = dateTimeString.components(separatedBy: " ")
+//
+//        // Extract date and time components
+//        let dateString = components[0] // "2024-04-22"
+//        let timeString = components[1] // "01:25:30"
+//
+//        print("Date: \(dateString)")
+//        print("Time: \(timeString)")
+//        
+//        let formatter = DateFormatter()
+//        formatter.dateFormat = "MMM d, yyyy h:mm a"
+//        return formatter.string(from: date)
+//    }
 }

@@ -65,12 +65,16 @@ class Destinations: ObservableObject {
                     print("Failed to parse JSON data")
                     return
                 }
+                print(landmarksArray)
                 
                 let decodedLandmarks = try landmarksArray.map { landmarkDict in
                     return try JSONDecoder().decode(Destination.self, from: JSONSerialization.data(withJSONObject: landmarkDict))
                 }
                 
-                self.destinations = decodedLandmarks
+                DispatchQueue.main.async {
+                    self.destinations = decodedLandmarks
+                }
+
             } catch {
                 print("Error decoding JSON: \(error)")
             }
@@ -97,7 +101,7 @@ struct HomeView: View {
     init () {
         Task {
             // await LandmarkStore.shared.getLandmarks(day: 1)
-            await LandmarkStore.shared.getLandmarksDay(day: 1)
+           // await LandmarkStore.shared.getLandmarksDay(day: 1)
             await UserHistoryStore.shared.getHistory()
             await UserItineraryStore.shared.getUpcomingTrips() // Call getUpcomingTrips here
             

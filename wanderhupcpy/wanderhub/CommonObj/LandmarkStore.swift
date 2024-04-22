@@ -24,7 +24,7 @@ final class LandmarkStore: ObservableObject {
         Task {
             await getNearest()
             // fix this later
-            await getLandmarks(ItinId: 1)
+            await getLandmarks(day: 1)
         }
 //        self.landmarks.append(contentsOf: [
 //            
@@ -236,7 +236,7 @@ final class LandmarkStore: ObservableObject {
         request.httpMethod = "GET"
         
         do {
-            print(request)
+            
             let (data, response) = try await URLSession.shared.data(for: request)
             
             if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {

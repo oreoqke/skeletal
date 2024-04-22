@@ -55,7 +55,10 @@ struct BookingView: View {
                     
                     Button("Submit Booking") {
                         let booking = TravelBooking(destination: destination, startDate: startDate, endDate: endDate, city: city, country: country, interests: interests)
-                        submitBooking(booking: booking)
+                        Task {
+                            await submitBooking(booking: booking)
+                        }
+                        
                     }
                     .padding()
                     .foregroundColor(Color.white)
@@ -71,9 +74,9 @@ struct BookingView: View {
                 // ChildNavController or any other views you want to display
     }
 
-    private func submitBooking(booking: TravelBooking) {
+    private func submitBooking(booking: TravelBooking) async {
         let service = TravelBookingService()
-        service.submitBooking(booking: booking) { success, error in
+        await service.submitBooking(booking: booking) { success, error in
             if let error = error {
                 // Handle the error scenario
                 alertMessage = "Error: \(error.localizedDescription)"

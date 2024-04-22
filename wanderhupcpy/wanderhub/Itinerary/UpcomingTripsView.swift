@@ -53,8 +53,8 @@ struct UpcomingTripsView: View {
         .padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
     }
     
-    @ViewBuilder
-    private func DisplayDestinations()-> some View {
+//    @ViewBuilder
+//    private func DisplayDestinations()-> some View {
 //            ScrollView(showsIndicators: false) {
 //                ForEach(destinations.destinations, id: \.destination){ destination in
 //                    NavigationLink(destination: BookingView(viewModel: viewmodel,
@@ -70,8 +70,8 @@ struct UpcomingTripsView: View {
 //                destinations.get_destinations()
 //            }
 //            .offset(x: 0, y: 40)
-    }
-    
+//    }
+//    
     @ViewBuilder
     private func DisplayDestination(destination: Destination)-> some View {
         HStack() {

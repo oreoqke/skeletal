@@ -13,8 +13,8 @@ struct Preference {
 }
 
 struct Onboard: View {
-   //@Binding var signinProcess: Bool
-   // @Binding var showDismiss: Bool
+    @Binding var signinProcess: Bool
+    @Binding var showDismiss: Bool
 
     @State private var preferences: [Preference] = [
         Preference(name: "Art", isSelected: false),
@@ -62,8 +62,8 @@ struct Onboard: View {
                 Task{
                  await sendPreferencesToBackend()
                 }
-        //        showDismiss.toggle()
-          //      signinProcess.toggle()
+                showDismiss.toggle()
+                signinProcess.toggle()
                 
             }) {
                 VStack(spacing: 10) {
@@ -105,10 +105,10 @@ struct Onboard: View {
             print("addUser: Bad URL")
             return
         }
-//        guard let token = UserDefaults.standard.string(forKey: "usertoken") else {
-//            return
-//        }
-        let token = "434acab1351f3aff0fdea39b0db4a56c29224ac3"
+        guard let token = UserDefaults.standard.string(forKey: "usertoken") else {
+            return
+        }
+     //   let token = "78f0821dacef6ecff7ddb913e13b7018725b83e2"
         //FIXME: CHANGE THIS, THIS IS ONLY FOR TESTING TOKEN IS FOR ONBOARD_PLEASE
         
         var request = URLRequest(url: apiUrl)
