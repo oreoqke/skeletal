@@ -15,7 +15,7 @@ struct Preference {
 struct Onboard: View {
     @Binding var signinProcess: Bool
     @Binding var showDismiss: Bool
-
+    
     @State private var preferences: [Preference] = [
         Preference(name: "Art", isSelected: false),
         Preference(name: "Architecture", isSelected: false),
@@ -52,7 +52,7 @@ struct Onboard: View {
                     .toggleStyle(SwitchToggleStyle(tint: .blue))
                     .listRowSeparator(.hidden)
                     .listRowBackground(backCol)
-
+                    
                 }
                 .scrollContentBackground(.hidden)
                 
@@ -60,7 +60,7 @@ struct Onboard: View {
             
             Button(action: {
                 Task{
-                 await sendPreferencesToBackend()
+                    await sendPreferencesToBackend()
                 }
                 showDismiss.toggle()
                 signinProcess.toggle()
@@ -95,54 +95,54 @@ struct Onboard: View {
             result[preference.name] = preference.isSelected ? 1 : 0
         }
         print(selectedPreferencesDict)
-
-
+        
+        
         guard let jsonData = try? JSONSerialization.data(withJSONObject: selectedPreferencesDict) else {
             print("addUser: jsonData serialization error")
             return
         }
-        guard let apiUrl = URL(string: "\(serverUrl)initialize-user-preferences/") else { // TODO REPLACE URL
-        guard let apiUrl = URL(string: "\(serverUrl)initialize-user-preferences/") else { // TODO REPLACE URL
-            print("addUser: Bad URL")
-            return
-        }
-        guard let token = UserDefaults.standard.string(forKey: "usertoken") else {
-            return
-        }
-     //   let token = "78f0821dacef6ecff7ddb913e13b7018725b83e2"
-        //FIXME: CHANGE THIS, THIS IS ONLY FOR TESTING TOKEN IS FOR ONBOARD_PLEASE
-        
-        var request = URLRequest(url: apiUrl)
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        //request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Accept") // expect response in JSON
-        request.setValue("Token \(token)", forHTTPHeaderField: "Authorization")
-        request.httpMethod = "POST"
-        request.httpBody = jsonData
-        
-        do {
-            let (data, response) = try await URLSession.shared.data(for: request)
-            
-            if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
-                print("onboard: HTTP STATUS: \(httpStatus.statusCode)")
-                print("Response:")
-                print(response)
+            guard let apiUrl = URL(string: "\(serverUrl)initialize-user-preferences/") else { // TODO REPLACE URL
+                print("addUser: Bad URL")
                 return
             }
-            print("Response:")
-            print(response)
-
-        } catch {
-            print("Error: \(error.localizedDescription)")
-            return
+            guard let token = UserDefaults.standard.string(forKey: "usertoken") else {
+                return
+            }
+            //   let token = "78f0821dacef6ecff7ddb913e13b7018725b83e2"
+            //FIXME: CHANGE THIS, THIS IS ONLY FOR TESTING TOKEN IS FOR ONBOARD_PLEASE
+            
+            var request = URLRequest(url: apiUrl)
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            //request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Accept") // expect response in JSON
+            request.setValue("Token \(token)", forHTTPHeaderField: "Authorization")
+            request.httpMethod = "POST"
+            request.httpBody = jsonData
+            
+            do {
+                let (data, response) = try await URLSession.shared.data(for: request)
+                
+                if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
+                    print("onboard: HTTP STATUS: \(httpStatus.statusCode)")
+                    print("Response:")
+                    print(response)
+                    return
+                }
+                print("Response:")
+                print(response)
+                
+            } catch {
+                print("Error: \(error.localizedDescription)")
+                return
+            }
+            
+            
         }
-
-
+        
     }
     
-}
+    //struct Onboard_Previews: PreviewProvider {
+    //    static var previews: some View {
+    //        Onboard()
+    //    }
+    //}
 
-//struct Onboard_Previews: PreviewProvider {
-//    static var previews: some View {
-//        Onboard()
-//    }
-//}
