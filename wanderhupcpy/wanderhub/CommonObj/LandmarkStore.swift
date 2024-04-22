@@ -8,7 +8,7 @@
 import Foundation
 import Observation
 
-struct NearestLandmark: Decodable {
+struct NearestLandmark: Hashable, Decodable {
     var distance: Double
     var landmark: String
     var latitude: Double
@@ -213,6 +213,12 @@ final class LandmarkStore: ObservableObject {
     
     func getNearest() async {
         
+        let parameters: [String: Any] = [
+            "longitude": LocManager.shared.location.coordinate.longitude,
+            "latitude": LocManager.shared.location.coordinate.latitude,
+            "distance": 10
+        ]
+        
         guard let token = UserDefaults.standard.string(forKey: "usertoken") else {
             return
         }
@@ -223,13 +229,16 @@ final class LandmarkStore: ObservableObject {
         }
         
         
-        var request = URLRequest(url: apiUrl)
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Accept") // expect response in JSON
-        request.setValue("Token \(token)", forHTTPHeaderField: "Authorization")
-        request.httpMethod = "POST"
-        
         do {
+            
+            let jsonBody = try JSONSerialization.data(withJSONObject: parameters, options: [])
+            var request = URLRequest(url: apiUrl)
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Accept") // expect response in JSON
+            request.setValue("Token \(token)", forHTTPHeaderField: "Authorization")
+            request.httpMethod = "POST"
+            request.httpBody = jsonBody
+            
             let (data, response) = try await URLSession.shared.data(for: request)
             
             if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {

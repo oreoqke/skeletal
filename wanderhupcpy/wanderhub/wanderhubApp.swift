@@ -12,10 +12,13 @@ import AVFoundation
 struct wanderhubApp: App {
     init() {
         LocManager.shared.startUpdates()
-        //Uncomment to require log in every time (clears out defaults)
-        if let appDomain = Bundle.main.bundleIdentifier {
-            UserDefaults.standard.removePersistentDomain(forName: appDomain)
+        Task {
+            await LandmarkStore.shared.getNearest()
         }
+        //Uncomment to require log in every time (clears out defaults)
+//        if let appDomain = Bundle.main.bundleIdentifier {
+//            UserDefaults.standard.removePersistentDomain(forName: appDomain)
+//        }
         
     }
     

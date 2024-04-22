@@ -11,6 +11,8 @@ import Alamofire
 import Observation
 import SwiftUI
 
+import Combine
+
 struct LandmarkVisit : Identifiable, Hashable, Decodable {
     var id: Int
     var landmark_name: String
@@ -23,12 +25,17 @@ struct LandmarkVisit : Identifiable, Hashable, Decodable {
     var image_url: String?
 }
 
-class UserHistoryStore :ObservableObject {
+class UserHistoryStore: ObservableObject {
     
     static let shared = UserHistoryStore()
     private init() {}               
-    private(set) var landmarkVisits = [LandmarkVisit]()
+    @Published var landmarkVisits = [LandmarkVisit]()
  
+    
+    func visitedPlaces() -> [LandmarkVisit] {
+        return landmarkVisits
+    }
+    
     
     func getHistory() async {
         // Method implementation
