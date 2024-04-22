@@ -21,7 +21,11 @@ final class LandmarkStore: ObservableObject {
 
     // private constructor (we don't actually want instances of this since dummy data)
     private init() {
-        
+        Task {
+            await getNearest()
+            // fix this later
+            await getLandmarks(ItinId: 1)
+        }
         self.landmarks.append(contentsOf: [
             
             // Bell Tower
@@ -153,7 +157,57 @@ final class LandmarkStore: ObservableObject {
     }
     
     func getNearest() async {
+        print("starting get nearest request")
+        let location = LocManager.shared.location
+        // set the distance to 10km
+        let distance = 10
+
+        let jsond = [ "longitude": String(location.coordinate.longitude), "latitude": String(location.coordinate.latitude), "distance": distance] as [String : Any]
+        guard let jsonData = try? JSONSerialization.data(withJSONObject: jsond) else {
+            print("addUser: jsonData serialization error")
+            return
+        }
         
+        
+        guard let token = UserDefaults.standard.string(forKey: "usertoken") else {
+            print("no token found in memory")
+            return
+        }
+        guard let apiUrl = URL(string: "\(serverUrl)get-nearby-landmarks/") else {
+            print("get nearby landmarks: bad url")
+            return
+        }
+        var request = URLRequest(url: apiUrl)
+        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Accept")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpMethod = "POST"
+        request.setValue("Token \(token)", forHTTPHeaderField: "Authorization")
+        request.httpBody = jsonData
+        
+        do {
+            print(request)
+            let (data, response) = try await URLSession.shared.data(for: request)
+            
+            if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
+                print("onboard: HTTP STATUS: \(httpStatus.statusCode)")
+                print("Response:")
+                print(response)
+                return
+            }
+            print("Response:")
+            print(response)
+            
+            guard let jsonObj = try? JSONSerialization.jsonObject(with: data) as? [String:Any] else {
+                print("getChatts: failed JSON deserialization")
+                return
+            }
+            print(jsonObj)
+            
+
+        } catch {
+            print("Error: \(error.localizedDescription)")
+            return
+        }
         
     }
     
