@@ -51,9 +51,9 @@ final class LandmarkStore: ObservableObject {
         
         // TODO: Call backend to remove the landmark from the itinerary
         
-        landmarks.removeAll{ String($0.id) == String(landmark.it_id) }
+        landmarks.removeAll{ String($0.id) == String(landmark.item_id) }
         
-        let jsonObj = ["id": landmark.it_id]
+        let jsonObj = ["id": landmark.item_id]
         print(jsonObj)
         guard let jsonData = try? JSONSerialization.data(withJSONObject: jsonObj) else {
             print("addUser: jsonData serialization error")

@@ -475,11 +475,11 @@ struct ItineraryView: View {
                     }
                 }
             }
-//            Spacer()
-//            Text("Add new destation")
-//                .font(.title)
-//                .fontWeight(.semibold)
-//                .foregroundColor(titleCol)
+            Spacer()
+            Text("Add new destation")
+                .font(.title)
+                .fontWeight(.semibold)
+                .foregroundColor(titleCol)
 //
 //            TextField("Describe what you want to visit", text: $newDescription)
 //                .autocapitalization(.none)
@@ -491,6 +491,32 @@ struct ItineraryView: View {
 //                        .foregroundColor(greyCol)
 //                )
 //                .padding(.horizontal, 40)
+            
+            HStack{
+                    TextField("Which day would you like to add a destination to?", text: $newDescription)
+                        .autocapitalization(.none)
+                        .foregroundColor(greyCol)
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(lineWidth: 1)
+                                .foregroundColor(greyCol)
+                        )
+                        .padding(.horizontal, 10)
+                        Button(action: {
+                            // Call the function to add landmark to itinerary
+                            Task {
+                                await UserItineraryStore.shared.addLandmarktoItinerary(itineraryID: itineraryID, day: newDescription)
+                                await refreshData()
+
+                            }
+                        }) {
+                            Image("arrow_right")
+                                .resizable()
+                                .frame(width: 30, height: 30)
+                              //  .frame(alignment: .trailing)
+                        }
+                }
         }
         .onAppear{
             Task {
@@ -509,4 +535,9 @@ struct ItineraryView: View {
         Spacer()
         ChildNavController(viewModel: viewModel)
     }
+    func refreshData() async {
+            print("refreshing")
+            await userItineraryStore.getTripDetails(itineraryID: itineraryID)
+            landmarks = userItineraryStore.newLandmarks
+        }
 }

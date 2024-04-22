@@ -152,7 +152,7 @@ struct OptionCardView: View {
 }
 
 struct newLandmark: Identifiable, Hashable, Decodable {
-    var it_id: Int
+    var item_id: Int
     var landmark_name: String
     var latitude: Double
     var longitude: Double
