@@ -59,21 +59,32 @@ struct MainTripView: View {
                     
                     ScrollView(showsIndicators: false) {
                         ForEach(userItineraryStore.itineraries, id: \.id) { itinerary in
-                            
-                            HStack{
-                                VStack(alignment: .leading) {
-                                    Text(itinerary.it_name).font(.headline)
-                                    Text("\(itinerary.city_name), \(itinerary.start_date)").font(.subheadline)
+                            NavigationLink(destination: ItineraryView(viewModel: viewModel)){
+                                HStack{
+                                    VStack(alignment: .leading) {
+                                        Text(itinerary.it_name).font(.headline)
+                                        Text("\(itinerary.city_name), \(itinerary.start_date)").font(.subheadline)
+                                    }
+                                    
                                 }
-                                
+                                .padding(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+                                .frame(width: 370, height: 96)
+                                .background(Color(red: 0.94, green: 0.92, blue: 0.87))
+                                .cornerRadius(8)
+                                .shadow(
+                                    color: Color(red: 0.71, green: 0.74, blue: 0.79, opacity: 0.12), radius: 16, y: 6
+                                )
                             }
-                            .padding(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
-                            .frame(width: 370, height: 96)
-                            .background(Color(red: 0.94, green: 0.92, blue: 0.87))
-                            .cornerRadius(8)
-                            .shadow(
-                                color: Color(red: 0.71, green: 0.74, blue: 0.79, opacity: 0.12), radius: 16, y: 6
-                            )
+                        }
+                    }
+                    .onAppear {
+                        Task {
+                            await userItineraryStore.getUpcomingTrips()
+                        }
+                    }
+                    .refreshable {
+                        Task {
+                            await userItineraryStore.getUpcomingTrips()
                         }
                     }
                 }

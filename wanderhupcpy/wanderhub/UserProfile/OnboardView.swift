@@ -16,6 +16,7 @@ struct Onboard: View {
     @Binding var signinProcess: Bool
     @Binding var showDismiss: Bool
     
+    
     @State private var preferences: [Preference] = [
         Preference(name: "Art", isSelected: false),
         Preference(name: "Architecture", isSelected: false),

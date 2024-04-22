@@ -39,7 +39,7 @@
 		041D3F322BC9C2DB0031C21F /* LandmarkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041D3F312BC9C2DB0031C21F /* LandmarkView.swift */; };
 		041D3F342BCB3B8A0031C21F /* UpcomingTripsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041D3F332BCB3B8A0031C21F /* UpcomingTripsView.swift */; };
 		043D03A82BB1BD5900D6E6EC /* Test1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 043D03A72BB1BD5900D6E6EC /* Test1.swift */; };
-		254A0BE62BD5D6EF008A6ED9 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 254A0BE52BD5D6EF008A6ED9 /* Alamofire */; };
+		0480EB282BD612360024C54F /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 0480EB272BD612360024C54F /* Alamofire */; };
 		25870D3F2BB0C62300F35B18 /* UserProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25870D3E2BB0C62300F35B18 /* UserProfileView.swift */; };
 		25870D412BB0CB6B00F35B18 /* UserHistoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25870D402BB0CB6B00F35B18 /* UserHistoryStore.swift */; };
 		25870D452BB104D700F35B18 /* OnboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25870D442BB104D700F35B18 /* OnboardView.swift */; };
@@ -99,7 +99,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				254A0BE62BD5D6EF008A6ED9 /* Alamofire in Frameworks */,
+				0480EB282BD612360024C54F /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -258,7 +258,7 @@
 			);
 			name = wanderhub;
 			packageProductDependencies = (
-				254A0BE52BD5D6EF008A6ED9 /* Alamofire */,
+				0480EB272BD612360024C54F /* Alamofire */,
 			);
 			productName = wanderhub;
 			productReference = F7EAB9132BA0B7F800F2B335 /* wanderhub.app */;
@@ -289,7 +289,7 @@
 			);
 			mainGroup = F7EAB90A2BA0B7F800F2B335;
 			packageReferences = (
-				254A0BE42BD5D6EF008A6ED9 /* XCRemoteSwiftPackageReference "Alamofire" */,
+				0480EB262BD612360024C54F /* XCRemoteSwiftPackageReference "Alamofire" */,
 			);
 			productRefGroup = F7EAB9142BA0B7F800F2B335 /* Products */;
 			projectDirPath = "";
@@ -572,7 +572,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		254A0BE42BD5D6EF008A6ED9 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+		0480EB262BD612360024C54F /* XCRemoteSwiftPackageReference "Alamofire" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
 			requirement = {
@@ -583,9 +583,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		254A0BE52BD5D6EF008A6ED9 /* Alamofire */ = {
+		0480EB272BD612360024C54F /* Alamofire */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 254A0BE42BD5D6EF008A6ED9 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			package = 0480EB262BD612360024C54F /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
 		};
 /* End XCSwiftPackageProductDependency section */
