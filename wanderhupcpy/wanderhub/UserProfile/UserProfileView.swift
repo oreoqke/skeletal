@@ -13,8 +13,11 @@ struct UserProfileView: View {
     @ObservedObject var viewModel: NavigationControllerViewModel
     @ObservedObject var userHistorystore = UserHistoryStore.shared
     @State private var isDataLoaded = false
-    let landmarkVisits = UserHistoryStore.shared.landmarkVisits
-   
+    
+    @State private var refreshID = UUID()
+    @State var identified: [LandmarkVisit]
+    
+    
     var body: some View {
         VStack{
             GreetUser()
@@ -27,18 +30,33 @@ struct UserProfileView: View {
             }
             .frame(width: 352, height: 39)
             VStack {
-           //     ScrollView {
-                    List(userHistorystore.landmarkVisits.indices, id: \.self) { index in
-                        LandmarkListRow(visit: userHistorystore.landmarkVisits[index])
+                    List(identified.indices, id: \.self) { index in
+                        LandmarkListRow(visit: identified[index])
                             .listRowSeparator(.hidden)
                             .listRowBackground(backCol)
+                            .id(refreshID)
                     }
                     .listStyle(.plain)
                     .refreshable {
                         printLandmarkVisits()
+                        refreshID = UUID()
+                        Task {
+                            await userHistorystore.getHistory()
+                            identified = UserHistoryStore.shared.visitedPlaces()
+                        }
                     }
-           //     }
                 .frame(maxHeight: .infinity)
+            }
+            .onAppear {
+                Task {
+                    await userHistorystore.getHistory()
+                    identified = UserHistoryStore.shared.visitedPlaces()
+                }
+                
+                
+            }
+            .onChange(of: userHistorystore.landmarkVisits) {  oldValue, newValue in
+                refreshID = UUID() // Update UUID to force redraw
             }
             
             Spacer()

@@ -40,11 +40,11 @@ struct MapView: View {
                     }
                     .annotationTitles(.hidden)
                 }
-//                ForEach(LandmarkStore.shared.nearest, id: \.self) { landmark in
-//                        Marker(landmark.landmark, systemImage: "questionmark.circle.fill",
-//                               coordinate: CLLocationCoordinate2D(latitude: Double(landmark.latitude)!, longitude: Double(landmark.longitude)!))
-//                            .tint(.mint)
-//                }
+                ForEach(LandmarkStore.shared.nearest, id: \.self) { landmark in
+                        Marker(landmark.landmark, systemImage: "questionmark.circle.fill",
+                               coordinate: CLLocationCoordinate2D(latitude: landmark.latitude, longitude: landmark.longitude))
+                            .tint(.mint)
+                }
                 
                 UserAnnotation() // shows user location
             }

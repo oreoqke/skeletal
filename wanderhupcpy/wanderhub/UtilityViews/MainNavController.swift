@@ -89,7 +89,7 @@ struct MainNavController: View {
                 case .landmark:
                     CameraView(viewModel: viewModel)
                 case .profile:
-                    UserProfileView(viewModel: viewModel)
+                    UserProfileView(viewModel: viewModel, identified: UserHistoryStore.shared.visitedPlaces())
                 default:
                     Text("Other view")
                     ChildNavController(viewModel: viewModel)
